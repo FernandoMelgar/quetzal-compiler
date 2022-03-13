@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuetzalCompiler", "QuetzalCompiler\QuetzalCompiler.csproj", "{CFB6EAC5-52D8-4832-8A93-8E1F4FC323CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{A6704D24-B71C-4C2F-8353-132871208D42}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFB6EAC5-52D8-4832-8A93-8E1F4FC323CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFB6EAC5-52D8-4832-8A93-8E1F4FC323CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFB6EAC5-52D8-4832-8A93-8E1F4FC323CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFB6EAC5-52D8-4832-8A93-8E1F4FC323CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6704D24-B71C-4C2F-8353-132871208D42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6704D24-B71C-4C2F-8353-132871208D42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6704D24-B71C-4C2F-8353-132871208D42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6704D24-B71C-4C2F-8353-132871208D42}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
