@@ -23,5 +23,31 @@ public enum TokenCategory
     NOT_EQUAL,
     L_EQUAL,
     G_EQUAL,
-    GREATER_THAN
+    GREATER_THAN,
+    LOWER_THAN,
+    // Math
+    PLUS,
+    MINUS,
+    MULTIPLY,
+    DIVIDE,
+    MODULE,
+    INT_LITERAL,
+    // SYMBOLS
+    SEMICOLON,
+    PAR_LEFT,
+    PAR_RIGHT,
+    CURLY_LEFT,
+    CURLY_RIGHT,
+    BRACKET_LEFT,
+    BRACKET_RIGHT,
+    
+    // Others
+    IDENTIFIER,
+    OTHER,
+    
+    // To Ignore
+    NEWLINE,
+    WHITESPACE,
+    BLOCK_COMMENT,
+    LINE_COMMENT
 }

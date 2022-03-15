@@ -6,8 +6,12 @@ public class TokenClassifier
 {
     private static readonly Regex _regex = new Regex(
         @"
+        (?<BlockComment> [/][*].*?[*][/])
+        | (?<LineComment> [/][/].*)
+        | (?<Newline> \n )
+        | (?<WhiteSpace> \s )  
         # Palabras reservadas
-        (?<Return> return)
+        | (?<Return> return)
         | (?<True> true)
         | (?<False> false)
         | (?<And> and)
@@ -28,11 +32,27 @@ public class TokenClassifier
         | (?<GreaterEqual> >=)
         | (?<Assign> [=])
         | (?<GreaterThan> [>])
-
+        | (?<LowerThan> [<])
+        | (?<Plus> [+])
+        | (?<Minus> [-])
+        | (?<Multiply> [*])
+        | (?<Divide> [/])
+        | (?<IntLiteral> \d+ )
+        | (?<Semicolon> [;])
+        | (?<ParLeft> [(]) 
+        | (?<ParRight> [)])
+        | (?<CurlyLeft> [{])
+        | (?<CurlyRight> [}])
+        | (?<Module> [%])
+        | (?<BracketLeft> [[])
+        | (?<BracketRight> []])
+        | (?<Identifier> [a-zA-Z]+ )     # Must go after all keywords
+        | (?<Other> . ) 
 ",
         RegexOptions.IgnorePatternWhitespace
         | RegexOptions.Compiled
-        | RegexOptions.Multiline
+        | RegexOptions.Multiline 
+        | RegexOptions.Singleline
     );
 
     private static readonly IDictionary<string, TokenCategory> tokenMap =
@@ -57,15 +77,44 @@ public class TokenClassifier
             {"Assign", TokenCategory.ASSIGN},
             {"LowerEqual", TokenCategory.L_EQUAL},
             {"GreaterEqual", TokenCategory.G_EQUAL},
-            {"GreaterThan", TokenCategory.GREATER_THAN}
+            {"GreaterThan", TokenCategory.GREATER_THAN},
+            {"LowerThan", TokenCategory.LOWER_THAN},
+            {"Plus", TokenCategory.PLUS},
+            {"Minus", TokenCategory.MINUS},
+            {"Multiply", TokenCategory.MULTIPLY},
+            {"Divide",TokenCategory.DIVIDE},
+            {"Semicolon", TokenCategory.SEMICOLON},
+            {"ParLeft", TokenCategory.PAR_LEFT},
+            {"ParRight", TokenCategory.PAR_RIGHT},
+            {"CurlyLeft", TokenCategory.CURLY_LEFT},
+            {"CurlyRight", TokenCategory.CURLY_RIGHT},
+            {"Module", TokenCategory.MODULE},
+            {"BracketLeft", TokenCategory.BRACKET_LEFT},
+            {"BracketRight", TokenCategory.BRACKET_RIGHT},
+            {"Identifier", TokenCategory.IDENTIFIER},
+            {"Other", TokenCategory.OTHER},
+            {"Newline", TokenCategory.NEWLINE},
+            {"WhiteSpace", TokenCategory.WHITESPACE},
+            {"IntLiteral", TokenCategory.INT_LITERAL},
+            {"BlockComment", TokenCategory.BLOCK_COMMENT},
+            {"LineComment", TokenCategory.LINE_COMMENT}
         };
+    
     public LinkedList<Token> classify(string input)
     {
         var tokenizedInput = new LinkedList<Token>();
         
         foreach (Match match in _regex.Matches(input))
         {
-            tokenizedInput.AddLast(_findToken(match));
+            if (match.Groups["Newline"].Success 
+                || match.Groups["WhiteSpace"].Success
+                || match.Groups["BlockComment"].Success
+                || match.Groups["LineComment"].Success)
+            { }
+            else
+            {
+                tokenizedInput.AddLast(_findToken(match));
+            }
         }
 
         return tokenizedInput;

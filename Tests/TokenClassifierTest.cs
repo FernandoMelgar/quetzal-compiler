@@ -69,13 +69,6 @@ public class TokenClassifierTest
     }
 
     [Test]
-    public void DontClassifyAND()
-    {
-        var tokenizedInput = _classifier.classify("AND");
-        Assert.AreEqual(0, tokenizedInput.Count);
-    }
-
-    [Test]
     public void ClassifyOr()
     {
         var tokenizedInput = _classifier.classify("or");
@@ -251,7 +244,203 @@ public class TokenClassifierTest
         Assert.AreEqual(">", token.Value.lexeme);
         Assert.AreEqual(TokenCategory.GREATER_THAN, token.Value.Category);  
     }
-    
-    
-    
+
+    [Test]
+    public void ClassifyLowerThan()
+    {
+        var tokenizedInput = _classifier.classify("<");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("<", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.LOWER_THAN, token.Value.Category);  
+    }
+
+    [Test]
+    public void ClassifyPlus()
+    {
+        var tokenizedInput = _classifier.classify("+");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("+", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.PLUS, token.Value.Category);  
+    }
+
+    [Test]
+    public void ClassifyMinus()
+    {
+        var tokenizedInput = _classifier.classify("-");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("-", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.MINUS, token.Value.Category);  
+    }
+
+    [Test]
+    public void ClassifyMultiplication()
+    {
+        var tokenizedInput = _classifier.classify("*");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("*", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.MULTIPLY, token.Value.Category);  
+    }
+
+    [Test]
+    public void ClassifyDivide()
+    {
+        var tokenizedInput = _classifier.classify("/");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("/", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.DIVIDE, token.Value.Category);    
+    }
+
+    [Test]
+    public void ClassifyModule()
+    {
+        var tokenizedInput = _classifier.classify("%");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("%", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.MODULE, token.Value.Category);    
+    }
+    [Test]
+    public void ClassifySemicolon()
+    {
+        var tokenizedInput = _classifier.classify(";");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual(";", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.SEMICOLON, token.Value.Category);    
+    }
+
+    [Test]
+    public void ClassifyParenthesisLeft()
+    {
+        var tokenizedInput = _classifier.classify("(");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("(", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.PAR_LEFT, token.Value.Category);    
+    }
+
+    [Test]
+    public void ClassifyParenthesisRight()
+    {
+        var tokenizedInput = _classifier.classify(")");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual(")", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.PAR_RIGHT, token.Value.Category);    
+    }
+
+    [Test]
+    public void ClassifyCurlyLeft()
+    {
+        var tokenizedInput = _classifier.classify("{");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("{", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CURLY_LEFT, token.Value.Category);       
+    }
+
+    [Test]
+    public void ClassifyCurlyRight()
+    {
+        var tokenizedInput = _classifier.classify("}");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("}", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CURLY_RIGHT, token.Value.Category);   
+    }
+
+    [Test]
+    public void ClassifyBracketLeft()
+    {
+        var tokenizedInput = _classifier.classify("[");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("[", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.BRACKET_LEFT, token.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyBracketRight()
+    {
+        var tokenizedInput = _classifier.classify("]");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("]", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.BRACKET_RIGHT, token.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyIdentifier()
+    {
+        var tokenizedInput = _classifier.classify("public");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("public", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyVarInitialization()
+    {
+        var tokenizedInput = _classifier.classify("var velocity = 10");
+        Assert.AreEqual(4, tokenizedInput.Count);
+        
+        Assert.AreEqual("var",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.VAR, tokenizedInput.First?.Value.Category);
+        
+        Assert.AreEqual("velocity", tokenizedInput.First?.Next?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.IDENTIFIER, tokenizedInput.First?.Next?.Value.Category);
+        
+        Assert.AreEqual("=", tokenizedInput.First?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.ASSIGN, tokenizedInput.First?.Next?.Next?.Value.Category);
+
+        Assert.AreEqual("10", tokenizedInput.First?.Next?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.INT_LITERAL, tokenizedInput.First?.Next?.Next?.Next?.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyIntLiteral()
+    {
+        var tokenizedInput = _classifier.classify("1234");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("1234", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.INT_LITERAL, token.Value.Category);
+    }
+
+    [Test]
+    public void IgnoreBlockComments()
+    {
+        var tokenizedInput = _classifier.classify("/* Hello darkness \n My old fried */ /**/");
+        Assert.AreEqual(0, tokenizedInput.Count);
+        
+    }
+
+    [Test]
+    public void IgnoreLineComment()
+    {
+        var tokenizedInput = _classifier.classify("// Hellou \n");
+        Assert.AreEqual(0, tokenizedInput.Count);
+
+    }
 }
