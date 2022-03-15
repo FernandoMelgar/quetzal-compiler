@@ -19,7 +19,7 @@ reverse(array) {
     }
 }
 
-
+// Converts num to a string with its binary representation.
 binary(num) {
     var result, remainder;
     if (num <= 0) {

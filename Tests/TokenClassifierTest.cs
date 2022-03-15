@@ -443,4 +443,26 @@ public class TokenClassifierTest
         Assert.AreEqual(0, tokenizedInput.Count);
 
     }
+
+    [Test]
+    public void ClassifyString()
+    {
+        var tokenizedInput = _classifier.classify("\"Hello, world\"");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("\"Hello, world\"", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.STRING, token.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyComma()
+    {
+        var tokenizedInput = _classifier.classify(",");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual(",", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.COMMA, token.Value.Category);
+    }
 }

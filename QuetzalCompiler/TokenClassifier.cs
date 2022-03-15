@@ -7,7 +7,7 @@ public class TokenClassifier
     private static readonly Regex _regex = new Regex(
         @"
         (?<BlockComment> [/][*].*?[*][/])
-        | (?<LineComment> [/][/].*)
+        | (?<LineComment> [/][/].*?\n)
         | (?<Newline> \n )
         | (?<WhiteSpace> \s )  
         # Palabras reservadas
@@ -39,6 +39,7 @@ public class TokenClassifier
         | (?<Divide> [/])
         | (?<IntLiteral> \d+ )
         | (?<Semicolon> [;])
+        | (?<Comma> [,])
         | (?<ParLeft> [(]) 
         | (?<ParRight> [)])
         | (?<CurlyLeft> [{])
@@ -46,6 +47,7 @@ public class TokenClassifier
         | (?<Module> [%])
         | (?<BracketLeft> [[])
         | (?<BracketRight> []])
+        | (?<String> "".*?"" )
         | (?<Identifier> [a-zA-Z]+ )     # Must go after all keywords
         | (?<Other> . ) 
 ",
@@ -97,36 +99,51 @@ public class TokenClassifier
             {"WhiteSpace", TokenCategory.WHITESPACE},
             {"IntLiteral", TokenCategory.INT_LITERAL},
             {"BlockComment", TokenCategory.BLOCK_COMMENT},
-            {"LineComment", TokenCategory.LINE_COMMENT}
+            {"LineComment", TokenCategory.LINE_COMMENT},
+            {"String", TokenCategory.STRING},
+            {"Comma", TokenCategory.COMMA}
         };
     
     public LinkedList<Token> classify(string input)
     {
         var tokenizedInput = new LinkedList<Token>();
-        
+        var row = 1;
+        var columnStart = 0;
         foreach (Match match in _regex.Matches(input))
         {
-            if (match.Groups["Newline"].Success 
-                || match.Groups["WhiteSpace"].Success
-                || match.Groups["BlockComment"].Success
-                || match.Groups["LineComment"].Success)
-            { }
+            if (match.Groups["Newline"].Success )
+            {
+                row++;
+                columnStart = match.Index + match.Length;
+            } else if (match.Groups["WhiteSpace"].Success
+                  || match.Groups["BlockComment"].Success
+                  || match.Groups["LineComment"].Success)
+            {
+                // Ignore white spaces and comments
+            } else if (match.Groups["Other"].Success)
+            {
+                tokenizedInput.AddLast(                        
+                    new Token(match.Value,
+                    TokenCategory.ILLEGAL_CHAR,
+                    row,
+                    match.Index - columnStart + 1));
+            }
             else
             {
-                tokenizedInput.AddLast(_findToken(match));
+                tokenizedInput.AddLast(_findToken(match, row, columnStart));
             }
         }
 
         return tokenizedInput;
     }
 
-    private static Token _findToken(Match match)
+    private static Token _findToken(Match match, int row, int columnStart)
     {
         foreach (var tokenCategory in tokenMap.Keys)
         {
             if (match.Groups[tokenCategory].Success)
             {
-                return new Token(match.Value, tokenMap[tokenCategory]);
+                return new Token(match.Value, tokenMap[tokenCategory], row, match.Index - columnStart + 1);
             }
         }
         throw new InvalidOperationException(

@@ -40,14 +40,17 @@ public enum TokenCategory
     CURLY_RIGHT,
     BRACKET_LEFT,
     BRACKET_RIGHT,
+    COMMA,
     
     // Others
     IDENTIFIER,
     OTHER,
+    STRING,
     
     // To Ignore
     NEWLINE,
     WHITESPACE,
     BLOCK_COMMENT,
-    LINE_COMMENT
+    LINE_COMMENT,
+    ILLEGAL_CHAR
 }
