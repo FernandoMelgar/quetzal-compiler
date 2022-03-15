@@ -4,6 +4,8 @@ namespace QuetzalCompiler;
 
 public class TokenClassifier
 {
+    private static readonly Regex _newLineInBlockCommentRegex = new Regex("\n");
+    
     private static readonly Regex _regex = new Regex(
         @"
         (?<BlockComment> [/][*].*?[*][/])
@@ -48,6 +50,7 @@ public class TokenClassifier
         | (?<BracketLeft> [[])
         | (?<BracketRight> []])
         | (?<String> "".*?"" )
+        | (?<Char> ['].*?['] )
         | (?<Identifier> [a-zA-Z]+ )     # Must go after all keywords
         | (?<Other> . ) 
 ",
@@ -101,7 +104,8 @@ public class TokenClassifier
             {"BlockComment", TokenCategory.BLOCK_COMMENT},
             {"LineComment", TokenCategory.LINE_COMMENT},
             {"String", TokenCategory.STRING},
-            {"Comma", TokenCategory.COMMA}
+            {"Comma", TokenCategory.COMMA},
+            {"Char", TokenCategory.CHAR}
         };
     
     public LinkedList<Token> classify(string input)
@@ -115,9 +119,13 @@ public class TokenClassifier
             {
                 row++;
                 columnStart = match.Index + match.Length;
-            } else if (match.Groups["WhiteSpace"].Success
-                  || match.Groups["BlockComment"].Success
-                  || match.Groups["LineComment"].Success)
+            }else if (match.Groups["BlockComment"].Success)
+            {
+                foreach (Match _ in _newLineInBlockCommentRegex.Matches(match.Value))
+                    row++;
+            }
+            else if (match.Groups["WhiteSpace"].Success
+                       || match.Groups["LineComment"].Success)
             {
                 // Ignore white spaces and comments
             } else if (match.Groups["Other"].Success)

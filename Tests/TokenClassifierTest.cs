@@ -465,4 +465,35 @@ public class TokenClassifierTest
         Assert.AreEqual(",", token.Value.lexeme);
         Assert.AreEqual(TokenCategory.COMMA, token.Value.Category);
     }
+
+    [Test]
+    public void ClassifySingleQuoteAsChar()
+    {
+        var tokenizedInput = _classifier.classify("\'N\'");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("\'N\'", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
+    }
+
+    [Test]
+    public void CountBlockCommentsLines()
+    {
+        var tokenizedInput = _classifier.classify(@"/* File: 002_binary.quetzal
+            Converts decimal numbers into binary.
+            (C) 2022 Ariel Ortiz, ITESM CEM
+            */
+
+            reverse");
+
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("reverse", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
+        Assert.AreEqual(6, token.Value.Row);
+
+    }
+
 }

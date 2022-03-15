@@ -46,11 +46,12 @@ public enum TokenCategory
     IDENTIFIER,
     OTHER,
     STRING,
-    
+    CHAR,
+
     // To Ignore
     NEWLINE,
     WHITESPACE,
     BLOCK_COMMENT,
     LINE_COMMENT,
-    ILLEGAL_CHAR
+    ILLEGAL_CHAR,
 }
