@@ -8,26 +8,27 @@ public class TokenClassifier
     
     private static readonly Regex _regex = new Regex(
         @"
-        (?<BlockComment> [/][*].*?[*][/])
-        | (?<LineComment> [/][/].*?\n)
+        (?<BlockComment> [/][*].*?[*][/])# TODO: Agregar el salto de linea y quitar el singleline
+        | (?<LineComment> [/][/].*?\n) # TODO: Quitar el salto de linea
         | (?<Newline> \n )
         | (?<WhiteSpace> \s )  
         # Palabras reservadas
-        | (?<Return> return)
-        | (?<True> true)
-        | (?<False> false)
-        | (?<And> and)
-        | (?<Or> or)
-        | (?<Break> break)
-        | (?<If> if)
-        | (?<Dec> dec)
-        | (?<Inc> inc)
-        | (?<Elif> elif)
-        | (?<Loop> loop)
-        | (?<Var> var)
-        | (?<Else> else)
-        | (?<Not> not)
+        | (?<Return> return\b)
+        | (?<True> true\b)
+        | (?<False> false\b)
+        | (?<And> and\b)
+        | (?<Or> or\b)
+        | (?<Break> break\b)
+        | (?<If> if\b)
+        | (?<Dec> dec\b)
+        | (?<Inc> inc\b)
+        | (?<Elif> elif\b)
+        | (?<Loop> loop\b)
+        | (?<Var> var\b)
+        | (?<Else> else\b)
+        | (?<Not> not\b)
         # Operaciones
+        | (?<IntLiteral> -?\d+ )
         | (?<EqualComparison> ==)
         | (?<NotEqual> !=)
         | (?<LowerEqual> <=)
@@ -39,7 +40,7 @@ public class TokenClassifier
         | (?<Minus> [-])
         | (?<Multiply> [*])
         | (?<Divide> [/])
-        | (?<IntLiteral> \d+ )
+        | (?<Char> [']([^""\n\\] | ( \\([nrt\\'""] | u[0-9a-fA-F]{6})))['])
         | (?<Semicolon> [;])
         | (?<Comma> [,])
         | (?<ParLeft> [(]) 
@@ -49,9 +50,8 @@ public class TokenClassifier
         | (?<Module> [%])
         | (?<BracketLeft> [[])
         | (?<BracketRight> []])
-        | (?<String> "".*?"" )
-        | (?<Char> ['].*?['] )
-        | (?<Identifier> [a-zA-Z]+ )     # Must go after all keywords
+        | (?<String> ""([^""\n\\] | ( \\([nrt\\'""] | u[0-9a-fA-F]{6})))*"" )
+        | (?<Identifier> ([a-zA-Z][a-zA-Z0-9_]*) )     # Must go after all keywords
         | (?<Other> . ) 
 ",
         RegexOptions.IgnorePatternWhitespace

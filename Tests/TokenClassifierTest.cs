@@ -471,12 +471,70 @@ public class TokenClassifierTest
     {
         var tokenizedInput = _classifier.classify("\'N\'");
         Assert.AreEqual(1, tokenizedInput.Count);
-        
+
         var token = tokenizedInput.First;
         Assert.AreEqual("\'N\'", token.Value.lexeme);
         Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
     }
 
+    [Test]
+    public void ClassifyScapeChar()
+    {
+        var tokenizedInput = _classifier.classify("\'\\n\'"); 
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        var token = tokenizedInput.First;
+        Assert.AreEqual("\'\\n\'", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
+    }
+
+    [Test]
+    public void DontClassifyCharWithLenghtOverOneIfAreNotSpecialChars()
+    {
+        var tokenizedInput = _classifier.classify("\'NN\'");
+        Assert.AreEqual(3, tokenizedInput.Count); 
+        
+        Assert.AreEqual("'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.ILLEGAL_CHAR, tokenizedInput.First?.Value.Category);
+        
+        Assert.AreEqual("NN", tokenizedInput.First?.Next?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.IDENTIFIER, tokenizedInput.First?.Next?.Value.Category);
+        
+        Assert.AreEqual("'", tokenizedInput.First?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.ILLEGAL_CHAR, tokenizedInput.First?.Next?.Next?.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyUnicodeHEX()
+    {
+        var tokenizedInput = _classifier.classify("'\\uFFFFFF'");
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        Assert.AreEqual("'\\uFFFFFF'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyUnicodeDigits()
+    {
+        var tokenizedInput = _classifier.classify("'\\u111222'");
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        Assert.AreEqual("'\\u111222'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyUnicodeMix()
+    {
+        var tokenizedInput = _classifier.classify("'\\u111FFF'");
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        Assert.AreEqual("'\\u111FFF'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
+    }
+
+    
     [Test]
     public void CountBlockCommentsLines()
     {
@@ -496,4 +554,87 @@ public class TokenClassifierTest
 
     }
 
+    [Test]
+    public void ClassifyCharNewLine()
+    {
+        var tokenizedInput = _classifier.classify("\'N\'");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("\'N\'", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
+    }
+
+    [Test]
+    public void ClassifyIdentifierWithUnderscoreAndNumbers()
+    {
+        var tokenizedInput = _classifier.classify("identy_fier300");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("identy_fier300", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
+    }
+
+    [Test]
+    public void DontClassifyIdentifierWithSpecialCharacters()
+    {
+        var tokenizedInput1 = _classifier.classify("iden'ty_fier300");
+        Assert.AreNotEqual(1, tokenizedInput1.Count);
+    }
+
+    [Test]
+    public void DontClassifyIdentifersThatStartWithUnderscore()
+    {
+        var tokenizedInput1 = _classifier.classify("_identy_fier300");
+        Assert.AreNotEqual(1, tokenizedInput1.Count);
+
+    }
+
+    [Test]
+    public void ClassifyNegativeInteger()
+    {
+        var tokenizedInput = _classifier.classify("-1000");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual("-1000", token.Value.lexeme);
+        Assert.AreEqual(TokenCategory.INT_LITERAL, token.Value.Category);
+    }
+
+    [Test]
+    public void DontClassifyWithHardCodedNewLine()
+    {
+        var tokenizedInput = _classifier.classify(@"
+");
+        Assert.AreEqual(0, tokenizedInput.Count);
+    }
+
+    [Test]
+    public void ClassifySingleQuoteWithScapeAsChar()
+    {
+        var tokenizedInput = _classifier.classify("'\''");
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        Assert.AreEqual("'\''",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
+        
+    }
+
+    [Test]
+    public void ClassifyStringWithScape()
+    {
+        var tokenizedInput = _classifier.classify("\"Hola\\nmundo\"");
+        Assert.AreEqual(1, tokenizedInput.Count);
+
+        Assert.AreEqual("\"Hola\\nmundo\"",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual(TokenCategory.STRING, tokenizedInput.First?.Value.Category);
+    }
+
+    [Test]
+    public void DontClassifyStringWithIllegalScapeSequence()
+    {
+        var tokenizedInput = _classifier.classify("\"Hola\\Rmundo\"");
+        Assert.AreEqual(5, tokenizedInput.Count);
+    }
 }
