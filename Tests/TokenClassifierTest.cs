@@ -431,11 +431,20 @@ public class TokenClassifierTest
     [Test]
     public void IgnoreBlockComments()
     {
-        var tokenizedInput = _classifier.classify("/* Hello darkness \n My old fried */ /**/");
+        var tokenizedInput = _classifier.classify("/* Hello darkness \n My \n old fried *//**/");
         Assert.AreEqual(0, tokenizedInput.Count);
         
     }
 
+    [Test]
+    public void IgnoreBlockCommentButInLine()
+    {
+        var tokenizedInput = _classifier.classify("/* Hello darkness My old fried */");
+        Assert.AreEqual(0, tokenizedInput.Count);
+    }
+    
+    
+    
     [Test]
     public void IgnoreLineComment()
     {
@@ -444,6 +453,13 @@ public class TokenClassifierTest
 
     }
 
+    [Test]
+    public void IgnoreLineCommentButWithNoLineBreak()
+    {
+        var tokenizedInput = _classifier.classify("// Hellou \n");
+        Assert.AreEqual(0, tokenizedInput.Count);
+    }
+    
     [Test]
     public void ClassifyString()
     {
