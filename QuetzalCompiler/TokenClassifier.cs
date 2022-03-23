@@ -8,8 +8,8 @@ public class TokenClassifier
     
     private static readonly Regex _regex = new Regex(
         @"
-        (?<BlockComment> [/][*].*?[*][/])# TODO: Agregar el salto de linea y quitar el singleline
-        | (?<LineComment> [/][/].*?\n) # TODO: Quitar el salto de linea
+        (?<BlockComment> [/][*](. | \n)*?[*][/])
+        | (?<LineComment> [/][/].*?\n)
         | (?<Newline> \n )
         | (?<WhiteSpace> \s )  
         # Palabras reservadas
@@ -56,8 +56,7 @@ public class TokenClassifier
 ",
         RegexOptions.IgnorePatternWhitespace
         | RegexOptions.Compiled
-        | RegexOptions.Multiline 
-        | RegexOptions.Singleline
+        | RegexOptions.Multiline
     );
 
     private static readonly IDictionary<string, TokenCategory> tokenMap =
@@ -141,7 +140,7 @@ public class TokenClassifier
                 tokenizedInput.AddLast(_findToken(match, row, columnStart));
             }
         }
-
+        
         return tokenizedInput;
     }
 
