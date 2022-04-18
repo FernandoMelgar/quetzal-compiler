@@ -144,6 +144,10 @@ public class TokenClassifier
         return tokenizedInput;
     }
 
+    public IEnumerable<Token> ClassifyAsEnumerable(string input)
+    {
+        return classify(input);
+    }
     private static Token _findToken(Match match, int row, int columnStart)
     {
         foreach (var tokenCategory in tokenMap.Keys)
