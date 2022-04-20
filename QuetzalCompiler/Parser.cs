@@ -5,6 +5,12 @@ public class Parser
 {
     private readonly IEnumerator<Token> _tokenStream;
     
+    static readonly ISet<TokenCategory> firstOfDefinition =
+        new HashSet<TokenCategory>() {
+            TokenCategory.VAR,
+            TokenCategory.IDENTIFIER,
+        };
+    
     static readonly ISet<TokenCategory> firstOfStatement =
         new HashSet<TokenCategory>() {
             TokenCategory.IDENTIFIER,
@@ -16,8 +22,18 @@ public class Parser
             TokenCategory.RETURN,
             TokenCategory.SEMICOLON,
         };
-    
         
+    static readonly ISet<TokenCategory> firstOfExpression =
+        new HashSet<TokenCategory>() {
+            TokenCategory.IDENTIFIER,
+            TokenCategory.BRACKET_LEFT,
+            TokenCategory.TRUE,
+            TokenCategory.FALSE,
+            TokenCategory.INT_LITERAL,
+            TokenCategory.CHAR,
+            TokenCategory.STRING,
+            TokenCategory.PAR_LEFT,
+        };
     static readonly ISet<TokenCategory> firstOfComparisons =
         new HashSet<TokenCategory>() {
             TokenCategory.EQUAL_COMPARISON,
@@ -30,6 +46,36 @@ public class Parser
             TokenCategory.L_EQUAL,
             TokenCategory.G_EQUAL,
         };
+
+    static readonly ISet<TokenCategory> firstOfAdditions =
+        new HashSet<TokenCategory>() {
+            TokenCategory.PLUS,
+            TokenCategory.MINUS,
+        };
+
+    static readonly ISet<TokenCategory> firstOfMultiplications =
+        new HashSet<TokenCategory>() {
+            TokenCategory.MULTIPLY,
+            TokenCategory.DIVIDE,
+            TokenCategory.MODULE,
+        };
+
+    static readonly ISet<TokenCategory> firstOfUnary =
+        new HashSet<TokenCategory>() {
+            TokenCategory.PLUS,
+            TokenCategory.MINUS,
+            TokenCategory.NOT,
+        };
+
+    static readonly ISet<TokenCategory> firstOfLit =
+        new HashSet<TokenCategory>() {
+            TokenCategory.TRUE,
+            TokenCategory.FALSE,
+            TokenCategory.INT_LITERAL,
+            TokenCategory.CHAR,
+            TokenCategory.STRING,
+        };
+
 
 
     public Parser(IEnumerator<Token> tokenStream) {
@@ -51,14 +97,29 @@ public class Parser
 
     public void Program()
     {
-        
+           DefList(); 
     }
 
-    public void Definition()
+    public void DefList()
     {
-        switch (CurrentTokenCategory == TokenCategory.VAR)
+        while (firstOfDefinition.Contains(CurrentTokenCategory))
         {
-            
+            Def();
+        }
+    }
+    
+    public void Def()
+    {
+        switch (CurrentTokenCategory)
+        {
+            case TokenCategory.VAR:
+                VarDef();
+                break;
+            case TokenCategory.IDENTIFIER:
+                FunctionDefinition();
+                break;
+            default:
+                throw new SyntaxError(firstOfDefinition, _tokenStream.Current);
         }
     }
 
@@ -96,7 +157,7 @@ public class Parser
 
     public void VarDefList()
     {
-        while (CurrentTokenCategory == TokenCategory.VAR) // TODO
+        while (CurrentTokenCategory == TokenCategory.VAR)
         {
             VarDef();
         }
@@ -104,7 +165,15 @@ public class Parser
     
     public void ParamList()
     {
-        throw new NotImplementedException();
+        if (CurrentTokenCategory == TokenCategory.IDENTIFIER)
+        {
+            Id();
+            while (CurrentTokenCategory == TokenCategory.COMMA)
+            {
+                Expect(TokenCategory.COMMA);
+                Id();
+            }
+        }
     }
 
     public void Id()
@@ -206,15 +275,31 @@ public class Parser
         Else();
     }
 
-    public void Else()
-    {
-        throw new NotImplementedException();
-    }
-
     public void ElseIfList()
     {
-        throw new NotImplementedException();
+        while(CurrentTokenCategory == TokenCategory.ELIF){
+            Expect(TokenCategory.ELIF);
+            Expect(TokenCategory.PAR_LEFT);
+            Expr();
+            Expect(TokenCategory.PAR_RIGHT);
+            Expect(TokenCategory.CURLY_LEFT);
+            StmtList();
+            Expect(TokenCategory.CURLY_RIGHT);
+        }
     }
+
+    public void Else()
+    {
+        if (CurrentTokenCategory == TokenCategory.ELSE)
+        {
+            Expect(TokenCategory.ELSE);
+            Expect(TokenCategory.CURLY_LEFT);
+            StmtList();
+            Expect(TokenCategory.CURLY_RIGHT);
+        }
+    }
+
+    
 
     public void FunCall()
     {
@@ -226,7 +311,15 @@ public class Parser
 
     public void ExprList()
     {
-        throw new NotImplementedException();
+        if (firstOfExpression.Contains(CurrentTokenCategory))
+        {
+            Expr();
+            while (CurrentTokenCategory == TokenCategory.COMMA)
+            {
+                Expect(TokenCategory.COMMA);
+                Expr();
+            }
+        }
     }
 
     public void StmtDec()
@@ -276,21 +369,21 @@ public class Parser
     public void ExprComp()
     {
         ExprRel();
-        do
+        while (firstOfComparisons.Contains(CurrentTokenCategory))
         {
             OpComp();
             ExprRel();
-        } while (firstOfComparisons.Contains(CurrentTokenCategory));
+        }
     }
 
     public void ExprRel()
     {
         ExprAdd();
-        do
+        while (firstOfComparisons.Contains(CurrentTokenCategory))
         {
             OpRel();
             ExprAdd();
-        } while (firstOfComparisons.Contains(CurrentTokenCategory));
+        }
     }
 
     private void OpRel()
@@ -319,11 +412,142 @@ public class Parser
     private void ExprAdd()
     {
         ExprMul();
-        do
+        while (firstOfAdditions.Contains(CurrentTokenCategory))
         {
             OpAdd();
             ExprMul();
-        } while (CurrentTokenCategory == );
+        }
+    }
+
+    private void OpAdd()
+    {
+        switch(CurrentTokenCategory)
+        {
+            case TokenCategory.PLUS:
+                Expect(TokenCategory.PLUS);
+                break;
+            case TokenCategory.MINUS:
+                Expect(TokenCategory.MINUS);
+                break;
+            default:
+                throw new SyntaxError(firstOfAdditions, _tokenStream.Current);
+        }
+    }
+
+    private void ExprMul()
+    {
+        ExprUnary();
+        while (firstOfMultiplications.Contains(CurrentTokenCategory))
+        {
+            OpMul();
+            ExprUnary();
+        } 
+    }
+
+    private void OpMul()
+    {
+        switch(CurrentTokenCategory)
+        {
+            case TokenCategory.MULTIPLY:
+                Expect(TokenCategory.MULTIPLY);
+                break;
+            case TokenCategory.DIVIDE:
+                Expect(TokenCategory.DIVIDE);
+                break;
+            case TokenCategory.MODULE:
+                Expect(TokenCategory.MODULE);
+                break;
+            default:
+                throw new SyntaxError(firstOfMultiplications, _tokenStream.Current);
+        }
+    }
+
+    private void ExprUnary()
+    {
+        while (firstOfUnary.Contains(CurrentTokenCategory))
+        {
+            OpUnary();
+        } 
+        ExprPrimary();
+    }
+
+    private void ExprPrimary()
+    {
+        if(firstOfLit.Contains(CurrentTokenCategory))                   // Checa todos los valores de Lit a la vez en lugar de usar varios switchcases
+        {
+            Lit();
+        }
+        switch(CurrentTokenCategory)
+        {
+            case TokenCategory.IDENTIFIER:
+                Id();                                                   // TODO: Revisar si es suficiente con sólo el ID para que cuente como ID.
+                if(CurrentTokenCategory == TokenCategory.PAR_LEFT)
+                {
+                    Expect(TokenCategory.PAR_LEFT);                     // FunCall
+                    ExprList();
+                    Expect(TokenCategory.PAR_RIGHT);
+                }
+                break;
+            case TokenCategory.BRACKET_LEFT:
+                Array();
+                break;
+            case TokenCategory.PAR_LEFT:
+                Expect(TokenCategory.PAR_LEFT);
+                Expr();
+                Expect(TokenCategory.PAR_RIGHT);
+                break;
+            default:
+                throw new SyntaxError(firstOfUnary, _tokenStream.Current);
+        }
+    }
+
+    private void Lit()
+    {
+        switch(CurrentTokenCategory)
+        {
+            case TokenCategory.TRUE:            
+                Expect(TokenCategory.TRUE);
+                break;
+            case TokenCategory.FALSE:
+                Expect(TokenCategory.FALSE);
+                break;
+            case TokenCategory.INT_LITERAL:
+                Expect(TokenCategory.INT_LITERAL);
+                break;
+            case TokenCategory.CHAR:
+                Expect(TokenCategory.CHAR);
+                break;
+            case TokenCategory.STRING:
+                Expect(TokenCategory.STRING);
+                break;
+            default:
+                throw new SyntaxError(firstOfLit, _tokenStream.Current);
+        }
+    }
+
+    private void Array()
+    {
+        Expect(TokenCategory.BRACKET_LEFT);
+        ExprList();
+        Expect(TokenCategory.BRACKET_RIGHT);
+    }
+
+    private void OpUnary()
+    {
+        switch(CurrentTokenCategory)
+        {
+            case TokenCategory.PLUS:
+                Expect(TokenCategory.PLUS);
+                break;
+            case TokenCategory.MINUS:
+                Expect(TokenCategory.MINUS);
+                break;
+            case TokenCategory.NOT:
+                Expect(TokenCategory.NOT);
+                break;
+            default:
+                throw new SyntaxError(firstOfUnary, _tokenStream.Current);
+        }
     }
 
     public void OpComp()
@@ -334,4 +558,5 @@ public class Parser
             Expect(TokenCategory.NOT_EQUAL);
         else
             throw new SyntaxError(firstOfComparisons, _tokenStream.Current);
+    }
 }
