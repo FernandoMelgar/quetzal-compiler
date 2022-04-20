@@ -15,7 +15,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("return", token.Value.lexeme);
+        Assert.AreEqual("return", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.RETURN, token.Value.Category);
     }
 
@@ -40,7 +40,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("true", token.Value.lexeme);
+        Assert.AreEqual("true", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.TRUE, token.Value.Category);
 
     }
@@ -52,7 +52,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("false", token.Value.lexeme);
+        Assert.AreEqual("false", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.FALSE, token.Value.Category);
     }
 
@@ -63,7 +63,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("and", token.Value.lexeme);
+        Assert.AreEqual("and", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.AND, token.Value.Category);
         
     }
@@ -75,7 +75,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("or", token.Value.lexeme);
+        Assert.AreEqual("or", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.OR, token.Value.Category);
     }
 
@@ -86,7 +86,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("break", token.Value.lexeme);
+        Assert.AreEqual("break", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.BREAK, token.Value.Category);
     }
 
@@ -97,7 +97,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("if", token.Value.lexeme);
+        Assert.AreEqual("if", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IF, token.Value.Category);   
     }
 
@@ -108,7 +108,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("dec", token.Value.lexeme);
+        Assert.AreEqual("dec", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.DEC, token.Value.Category);     
     }
 
@@ -119,7 +119,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("inc", token.Value.lexeme);
+        Assert.AreEqual("inc", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.INC, token.Value.Category);
     }
 
@@ -130,7 +130,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("elif", token.Value.lexeme);
+        Assert.AreEqual("elif", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ELIF, token.Value.Category);
     }
 
@@ -141,7 +141,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("loop", token.Value.lexeme);
+        Assert.AreEqual("loop", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.LOOP, token.Value.Category);   
     }
 
@@ -152,7 +152,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("var", token.Value.lexeme);
+        Assert.AreEqual("var", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.VAR, token.Value.Category);   
     }
 
@@ -163,7 +163,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("else", token.Value.lexeme);
+        Assert.AreEqual("else", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ELSE, token.Value.Category);   
     }
 
@@ -174,7 +174,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("not", token.Value.lexeme);
+        Assert.AreEqual("not", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.NOT, token.Value.Category);   
     }
 
@@ -185,7 +185,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("=", token.Value.lexeme);
+        Assert.AreEqual("=", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ASSIGN, token.Value.Category);   
     }
 
@@ -196,7 +196,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("==", token.Value.lexeme);
+        Assert.AreEqual("==", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.EQUAL_COMPARISON, token.Value.Category);    
     }
 
@@ -207,7 +207,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("!=", token.Value.lexeme);
+        Assert.AreEqual("!=", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.NOT_EQUAL, token.Value.Category);   
     }
 
@@ -218,7 +218,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("<=", token.Value.lexeme);
+        Assert.AreEqual("<=", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.L_EQUAL, token.Value.Category);  
     }
     
@@ -229,7 +229,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual(">=", token.Value.lexeme);
+        Assert.AreEqual(">=", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.G_EQUAL, token.Value.Category);  
     }
     
@@ -241,7 +241,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual(">", token.Value.lexeme);
+        Assert.AreEqual(">", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.GREATER_THAN, token.Value.Category);  
     }
 
@@ -252,7 +252,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("<", token.Value.lexeme);
+        Assert.AreEqual("<", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.LOWER_THAN, token.Value.Category);  
     }
 
@@ -263,7 +263,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("+", token.Value.lexeme);
+        Assert.AreEqual("+", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.PLUS, token.Value.Category);  
     }
 
@@ -274,7 +274,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("-", token.Value.lexeme);
+        Assert.AreEqual("-", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.MINUS, token.Value.Category);  
     }
 
@@ -285,7 +285,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("*", token.Value.lexeme);
+        Assert.AreEqual("*", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.MULTIPLY, token.Value.Category);  
     }
 
@@ -296,7 +296,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("/", token.Value.lexeme);
+        Assert.AreEqual("/", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.DIVIDE, token.Value.Category);    
     }
 
@@ -307,7 +307,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("%", token.Value.lexeme);
+        Assert.AreEqual("%", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.MODULE, token.Value.Category);    
     }
     [Test]
@@ -317,7 +317,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual(";", token.Value.lexeme);
+        Assert.AreEqual(";", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.SEMICOLON, token.Value.Category);    
     }
 
@@ -328,7 +328,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("(", token.Value.lexeme);
+        Assert.AreEqual("(", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.PAR_LEFT, token.Value.Category);    
     }
 
@@ -339,7 +339,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual(")", token.Value.lexeme);
+        Assert.AreEqual(")", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.PAR_RIGHT, token.Value.Category);    
     }
 
@@ -350,7 +350,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("{", token.Value.lexeme);
+        Assert.AreEqual("{", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CURLY_LEFT, token.Value.Category);       
     }
 
@@ -361,7 +361,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("}", token.Value.lexeme);
+        Assert.AreEqual("}", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CURLY_RIGHT, token.Value.Category);   
     }
 
@@ -372,7 +372,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("[", token.Value.lexeme);
+        Assert.AreEqual("[", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.BRACKET_LEFT, token.Value.Category);
     }
 
@@ -383,7 +383,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("]", token.Value.lexeme);
+        Assert.AreEqual("]", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.BRACKET_RIGHT, token.Value.Category);
     }
 
@@ -394,7 +394,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("public", token.Value.lexeme);
+        Assert.AreEqual("public", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
     }
 
@@ -404,16 +404,16 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("var velocity = 10");
         Assert.AreEqual(4, tokenizedInput.Count);
         
-        Assert.AreEqual("var",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("var",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.VAR, tokenizedInput.First?.Value.Category);
         
-        Assert.AreEqual("velocity", tokenizedInput.First?.Next?.Value.lexeme);
+        Assert.AreEqual("velocity", tokenizedInput.First?.Next?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IDENTIFIER, tokenizedInput.First?.Next?.Value.Category);
         
-        Assert.AreEqual("=", tokenizedInput.First?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual("=", tokenizedInput.First?.Next?.Next?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ASSIGN, tokenizedInput.First?.Next?.Next?.Value.Category);
 
-        Assert.AreEqual("10", tokenizedInput.First?.Next?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual("10", tokenizedInput.First?.Next?.Next?.Next?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.INT_LITERAL, tokenizedInput.First?.Next?.Next?.Next?.Value.Category);
     }
 
@@ -424,7 +424,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("1234", token.Value.lexeme);
+        Assert.AreEqual("1234", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.INT_LITERAL, token.Value.Category);
     }
 
@@ -467,7 +467,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("\"Hello, world\"", token.Value.lexeme);
+        Assert.AreEqual("\"Hello, world\"", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.STRING, token.Value.Category);
     }
 
@@ -478,7 +478,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual(",", token.Value.lexeme);
+        Assert.AreEqual(",", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.COMMA, token.Value.Category);
     }
 
@@ -489,7 +489,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
 
         var token = tokenizedInput.First;
-        Assert.AreEqual("\'N\'", token.Value.lexeme);
+        Assert.AreEqual("\'N\'", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
     }
 
@@ -500,7 +500,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
 
         var token = tokenizedInput.First;
-        Assert.AreEqual("\'\\n\'", token.Value.lexeme);
+        Assert.AreEqual("\'\\n\'", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
     }
 
@@ -510,13 +510,13 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("\'NN\'");
         Assert.AreEqual(3, tokenizedInput.Count); 
         
-        Assert.AreEqual("'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("'",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ILLEGAL_CHAR, tokenizedInput.First?.Value.Category);
         
-        Assert.AreEqual("NN", tokenizedInput.First?.Next?.Value.lexeme);
+        Assert.AreEqual("NN", tokenizedInput.First?.Next?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IDENTIFIER, tokenizedInput.First?.Next?.Value.Category);
         
-        Assert.AreEqual("'", tokenizedInput.First?.Next?.Next?.Value.lexeme);
+        Assert.AreEqual("'", tokenizedInput.First?.Next?.Next?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.ILLEGAL_CHAR, tokenizedInput.First?.Next?.Next?.Value.Category);
     }
 
@@ -526,7 +526,7 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("'\\uFFFFFF'");
         Assert.AreEqual(1, tokenizedInput.Count);
 
-        Assert.AreEqual("'\\uFFFFFF'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("'\\uFFFFFF'",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
     }
 
@@ -536,7 +536,7 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("'\\u111222'");
         Assert.AreEqual(1, tokenizedInput.Count);
 
-        Assert.AreEqual("'\\u111222'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("'\\u111222'",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
     }
 
@@ -546,7 +546,7 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("'\\u111FFF'");
         Assert.AreEqual(1, tokenizedInput.Count);
 
-        Assert.AreEqual("'\\u111FFF'",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("'\\u111FFF'",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
     }
 
@@ -564,7 +564,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("reverse", token.Value.lexeme);
+        Assert.AreEqual("reverse", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
         Assert.AreEqual(6, token.Value.Row);
 
@@ -577,7 +577,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("\'N\'", token.Value.lexeme);
+        Assert.AreEqual("\'N\'", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, token.Value.Category);
     }
 
@@ -588,7 +588,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("identy_fier300", token.Value.lexeme);
+        Assert.AreEqual("identy_fier300", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.IDENTIFIER, token.Value.Category);
     }
 
@@ -614,7 +614,7 @@ public class TokenClassifierTest
         Assert.AreEqual(1, tokenizedInput.Count);
         
         var token = tokenizedInput.First;
-        Assert.AreEqual("-1000", token.Value.lexeme);
+        Assert.AreEqual("-1000", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.INT_LITERAL, token.Value.Category);
     }
 
@@ -632,7 +632,7 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("'\''");
         Assert.AreEqual(1, tokenizedInput.Count);
 
-        Assert.AreEqual("'\''",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("'\''",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.CHAR, tokenizedInput.First?.Value.Category);
         
     }
@@ -643,7 +643,7 @@ public class TokenClassifierTest
         var tokenizedInput = _classifier.classify("\"Hola\\nmundo\"");
         Assert.AreEqual(1, tokenizedInput.Count);
 
-        Assert.AreEqual("\"Hola\\nmundo\"",tokenizedInput.First?.Value.lexeme);
+        Assert.AreEqual("\"Hola\\nmundo\"",tokenizedInput.First?.Value.Lexeme);
         Assert.AreEqual(TokenCategory.STRING, tokenizedInput.First?.Value.Category);
     }
 

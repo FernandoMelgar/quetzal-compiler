@@ -11,7 +11,7 @@ public class Token
     readonly int _column;
 
     
-    public string lexeme => _lexeme;
+    public string Lexeme => _lexeme;
 
     public TokenCategory Category => _category;
 
@@ -30,6 +30,6 @@ public class Token
     }
 
     public override string ToString() {
-        return $"{{{_category}, \"{lexeme}\", @({_row}, {_column})}}";
+        return $"{{{_category}, \"{Lexeme}\", @({_row}, {_column})}}";
     }
 }
