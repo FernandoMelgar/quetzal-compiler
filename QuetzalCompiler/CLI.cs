@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace QuetzalCompiler;
 
 public class CLI
@@ -23,20 +25,27 @@ public class CLI
         Console.WriteLine();
 
 
-        try {
+        try
+        {
             var inputPath = "/Users/quality/RiderProjects/QuetzalSolution/QuetzalCompiler/001_hello.quetzal";
             var input = File.ReadAllText(inputPath);
 
             Console.WriteLine(
                 $"===== Tokens from: \"{inputPath}\" =====");
             var count = 1;
-            foreach (var tok in new TokenClassifier().classify(input)) {
-                Console.WriteLine($"[{count++}] {tok}");
-            }
+            var parser = new Parser(new TokenClassifier().ClassifyAsEnumerable(input).GetEnumerator());
+            parser.Program();
 
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e)
+        {
             Console.Error.WriteLine(e.Message);
             Environment.Exit(1);
+        }
+        catch (SyntaxErrorException e)
+        {
+            Console.Error.WriteLine(e.Message);
+            Environment.Exit(1);   
         }
     }
 }
