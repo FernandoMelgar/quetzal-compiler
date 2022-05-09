@@ -1,6 +1,3 @@
-using System.Data;
-using Microsoft.VisualBasic.CompilerServices;
-
 namespace QuetzalCompiler;
 public class Parser
 {
@@ -444,19 +441,25 @@ public class Parser
         } 
     }
 
-    public void OpMul()
+    public Node OpMul()
     {
         switch(CurrentTokenCategory)
         {
             case TokenCategory.MULTIPLY:
-                Expect(TokenCategory.MULTIPLY);
-                break;
+                return new Multiplication()
+                {
+                    AnchorToken = Expect(TokenCategory.MULTIPLY)
+                };
             case TokenCategory.DIVIDE:
-                Expect(TokenCategory.DIVIDE);
-                break;
+                return new Division()
+                {
+                    AnchorToken = Expect(TokenCategory.DIVIDE)
+                };
             case TokenCategory.MODULE:
-                Expect(TokenCategory.MODULE);
-                break;
+                return new ModuleOp()
+                {
+                    AnchorToken = Expect(TokenCategory.MODULE)
+                };
             default:
                 throw new SyntaxError(firstOfMultiplications, _tokenStream.Current);
         }
@@ -493,25 +496,35 @@ public class Parser
             throw new SyntaxError(TokenCategory.IDENTIFIER, _tokenStream.Current);
     }
 
-    public void Lit()
+    public Node Lit()
     {
         switch(CurrentTokenCategory)
         {
-            case TokenCategory.TRUE:            
-                Expect(TokenCategory.TRUE);
-                break;
+            case TokenCategory.TRUE:
+                return new True()
+                {
+                    AnchorToken = Expect(TokenCategory.TRUE)
+                };
             case TokenCategory.FALSE:
-                Expect(TokenCategory.FALSE);
-                break;
+                return new False()
+                {
+                    AnchorToken = Expect(TokenCategory.FALSE)
+                };
             case TokenCategory.INT_LITERAL:
-                Expect(TokenCategory.INT_LITERAL);
-                break;
+                return new Int()
+                {
+                    AnchorToken = Expect(TokenCategory.INT_LITERAL)
+                };
             case TokenCategory.CHAR:
-                Expect(TokenCategory.CHAR);
-                break;
+                return new Char()
+                {
+                    AnchorToken = Expect(TokenCategory.CHAR)
+                };
             case TokenCategory.STRING:
-                Expect(TokenCategory.STRING);
-                break;
+                return new String()
+                {
+                    AnchorToken = Expect(TokenCategory.STRING)
+                };
             default:
                 throw new SyntaxError(firstOfLit, _tokenStream.Current);
         }
@@ -524,34 +537,44 @@ public class Parser
         Expect(TokenCategory.BRACKET_RIGHT);
     }
 
-    public void OpUnary()
+    public Node OpUnary()
     {
         switch(CurrentTokenCategory)
         {
             case TokenCategory.PLUS:
-                Expect(TokenCategory.PLUS);
-                break;
+                return new Plus()
+                {
+                    AnchorToken = Expect(TokenCategory.PLUS)
+                };
             case TokenCategory.MINUS:
-                Expect(TokenCategory.MINUS);
-                break;
+                return new Minus()
+                {
+                    AnchorToken = Expect(TokenCategory.MINUS)
+                };
             case TokenCategory.NOT:
-                Expect(TokenCategory.NOT);
-                break;
+                return new Not()
+                {
+                    AnchorToken = Expect(TokenCategory.NOT)
+                };
             default:
                 throw new SyntaxError(firstOfUnary, _tokenStream.Current);
         }
     }
 
-    public void OpComp()
+    public Node OpComp()
     {
         switch (CurrentTokenCategory)
         {
             case TokenCategory.EQUAL_COMPARISON:
-                Expect(TokenCategory.EQUAL_COMPARISON);
-                break;
+                return new EqualComparison()
+                {
+                    AnchorToken = Expect(TokenCategory.EQUAL_COMPARISON)
+                };
             case TokenCategory.NOT_EQUAL:
-                Expect(TokenCategory.NOT_EQUAL);
-                break;
+                return new NotEqualComparison()
+                {
+                    AnchorToken = Expect(TokenCategory.NOT_EQUAL)
+                };
             default:
                 throw new SyntaxError(firstOfComparisons, _tokenStream.Current);
         }
