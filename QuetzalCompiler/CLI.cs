@@ -1,4 +1,6 @@
+using System;
 using System.Data;
+using System.IO;
 
 namespace QuetzalCompiler;
 
@@ -34,7 +36,8 @@ public class CLI
                 $"===== Tokens from: \"{inputPath}\" =====");
             var count = 1;
             var parser = new Parser(new TokenClassifier().ClassifyAsEnumerable(input).GetEnumerator());
-            parser.Program();
+            var rootNode = parser.Program();
+            Console.WriteLine(rootNode.ToStringTree());
 
         }
         catch (FileNotFoundException e)
