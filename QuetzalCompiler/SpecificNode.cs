@@ -1,6 +1,18 @@
 namespace QuetzalCompiler;
 
 
+public class Program: Node {}
+
+public class DeclarationList: Node {}
+
+public class Declaration: Node {}
+
+public class StatementList: Node {}
+
+public class Assignment: Node {}
+
+public class Identifier: Node {}
+
 public class Comparison: Node {}
 
 public class EqualComparison: Node {}
