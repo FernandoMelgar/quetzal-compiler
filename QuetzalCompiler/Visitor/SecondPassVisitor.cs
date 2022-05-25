@@ -29,33 +29,24 @@ public class SecondPassVisitor
         var paramList = node[1];
         foreach (var child in paramList)
             DeclareInScope((dynamic) child);
-        if (paramList.CountChildren() > 0)
-        {
-            // DeclaredVariables??
-        }
         Visit((dynamic) paramList);
         if (node[2].CountChildren() > 0) 
             Visit((dynamic) node[2]); // Var Def List
         Visit((dynamic) node[3]); // Stmt List
     }
-    
-     //-----------------------------------------------------------
-    public void Visit(DeclarationList node) {
-        VisitChildren(node);
-    }
 
     //-----------------------------------------------------------
-    public void Visit(Declaration node) {
+    public void Visit(VarDef node) {
 
         var variableName = node[0].AnchorToken.Lexeme;
 
-        if (VGST.ContainsKey(variableName)) {
+        if (VGST.Contains(variableName)) {
             throw new SemanticError(
                 "Duplicated variable: " + variableName,
                 node[0].AnchorToken);
 
         } else {
-            VGST.Add(variableName, Int32);                      // TODO: Agregar cada variable al VGST
+            VGST.Add(variableName);
         }
     }
 
@@ -69,18 +60,7 @@ public class SecondPassVisitor
 
         var variableName = node.AnchorToken.Lexeme;
 
-        if (VGST.Contains(variableName)) {
-
-            var expectedType = VGST[variableName];
-
-            if (expectedType != Visit((dynamic) node[0])) {
-                throw new SemanticError(
-                    "Expecting type " + expectedType
-                    + " in assignment statement",
-                    node.AnchorToken);
-            }
-
-        } else {
+        if (!VGST.Contains(variableName)) {
             throw new SemanticError(
                 "Undeclared variable: " + variableName,
                 node.AnchorToken);
