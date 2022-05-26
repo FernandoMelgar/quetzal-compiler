@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.IO;
+using QuetzalCompiler.Visitor;
 
 namespace QuetzalCompiler;
 
@@ -37,8 +38,24 @@ public class CLI
             var count = 1;
             var parser = new Parser(new TokenClassifier().ClassifyAsEnumerable(input).GetEnumerator());
             var rootNode = parser.Program();
-            Console.WriteLine(rootNode.ToStringTree());
 
+            var firstPassVisitor = new FirstPassVisitor();
+            firstPassVisitor.Visit((dynamic) rootNode);
+            var secondPassVisitor = new SecondPassVisitor(firstPassVisitor.FGST, firstPassVisitor.VGST);
+            secondPassVisitor.Visit((dynamic) rootNode);
+
+            Console.WriteLine("=== Variables ===");
+            foreach (var variable in secondPassVisitor.VGST)
+            {
+                Console.WriteLine(variable);
+            }
+
+            Console.WriteLine("=== Functions ===");
+            foreach (var function in secondPassVisitor.FGST)
+            {
+                Console.WriteLine(function.Key);
+
+            }
         }
         catch (FileNotFoundException e)
         {
@@ -48,7 +65,12 @@ public class CLI
         catch (SyntaxErrorException e)
         {
             Console.Error.WriteLine(e.Message);
-            Environment.Exit(1);   
+            Environment.Exit(1);
+        }
+        catch (SemanticError e)
+        {
+            Console.Error.WriteLine(e.Message);
+            Environment.Exit(1);
         }
     }
 }

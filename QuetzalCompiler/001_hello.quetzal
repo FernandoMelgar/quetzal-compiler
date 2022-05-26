@@ -4,11 +4,9 @@
    (C) 2022 Ariel Ortiz, ITESM CEM.
  */
 
-var hello;
-
+sqrt() {}
 main() {
-    var array;
-    array = [true and true and true or false and true];
-    sum = 0;
-
+  var x;
+  x = 10;
+  sqrt(x);
 }
