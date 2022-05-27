@@ -54,6 +54,13 @@ public class CLI
             foreach (var function in secondPassVisitor.FGST)
             {
                 Console.WriteLine(function.Key);
+                if (function.Value.refLST != null && function.Value.refLST.Count > 0)
+                {
+                    foreach (var varName in function.Value.refLST)
+                    {
+                        Console.WriteLine($"- {varName}");
+                    }   
+                }
 
             }
         }
