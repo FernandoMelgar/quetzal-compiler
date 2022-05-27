@@ -318,7 +318,7 @@ public class SecondPassVisitor
             if (!localTable.Contains(varName))
                 localTable.Add(varName);
             else
-                throw new SemanticError("Var declaration found twice", param.AnchorToken);
+                throw new SemanticError("Var declaration found twice: ", param.AnchorToken);
         }
     }
 }
