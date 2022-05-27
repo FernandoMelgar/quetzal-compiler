@@ -158,5 +158,24 @@ public class ParserTest
         var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
         parser.Program();   
     }
+    
+    [Test]
+    public void EqualComparison()
+    {
+        var program = @"main(){var x;
+                        x = 1;
+                        y = (x == 1);}";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        parser.Program();   
+    }
+    
+    [Test]
+    public void TestChar()
+    {
+        var program = @"main(){var x;
+                        x = 'h';}";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        parser.Program();   
+    }
 
 }

@@ -72,7 +72,7 @@ public class SecondPassVisitor
     
     public void Visit(StmtBreak node) {
         if (LoopLevel == 0){
-            throw new SemanticError($"Incorrect usage of break statment", node.AnchorToken);
+            throw new SemanticError($"Incorrect usage of break statement", node.AnchorToken);
         }
     }
     public void Visit(VarDefList node)
@@ -125,7 +125,7 @@ public class SecondPassVisitor
         else if (!VGST.Contains(variableName))
         {
             throw new SemanticError(
-                $"Variable not in scope {node.AnchorToken.Lexeme}",
+                $"Variable not in scope: {node.AnchorToken.Lexeme}",
                 node.AnchorToken
             );
         }
@@ -154,26 +154,14 @@ public class SecondPassVisitor
 
     public void Visit(EqualComparison node)
     {
-        string op = "==";
-        if (node[0] == null ||
-            node[1] == null)
-        {
-            throw new SemanticError(
-                $"Operator {op} requires two operands",
-                node.AnchorToken);
-        }
+        Visit((dynamic) node[0]);
+        Visit((dynamic) node[1]);
     }
 
     public void Visit(NotEqualComparison node)
     {
-        string op = "!=";
-        if (node[0] == null ||
-            node[1] == null)
-        {
-            throw new SemanticError(
-                $"Operator {op} requires two operands",
-                node.AnchorToken);
-        }
+        Visit((dynamic) node[0]);
+        Visit((dynamic) node[1]);
     }
 
     public void Visit(Plus node)
@@ -190,12 +178,7 @@ public class SecondPassVisitor
 
     public void Visit(Not node)
     {
-        if (node[0] == null)
-        {
-            throw new SemanticError(
-                $"Reserved word not requires an operand",
-                node.AnchorToken);
-        }
+        Visit((dynamic) node[0]);
     }
 
     public void Visit(And node) {
@@ -228,16 +211,6 @@ public class SecondPassVisitor
 
     public void Visit(Char node)
     {
-        var character = node.AnchorToken.Lexeme.Substring(1,1);
-        char result;
-
-        if (!char.TryParse(character, out result)) // TODO: How to parse 'N', Counting '' in char length
-        {
-            // Checa si character es null o tiene una longitud mayor a 1
-            throw new SemanticError(
-                $"Literal not a character: {character}",
-                node.AnchorToken);
-        }
     }
 
     public void Visit(String node)

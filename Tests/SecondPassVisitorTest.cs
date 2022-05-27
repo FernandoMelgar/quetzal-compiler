@@ -18,8 +18,8 @@ public class SecondPassVisitorTest
         var programNode = parser.Program();
         var fpv = new FirstPassVisitor();
         var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
-        fpv.Visit((dynamic) programNode);
-        spv.Visit((dynamic) programNode);
+        fpv.Visit((dynamic)programNode);
+        spv.Visit((dynamic)programNode);
     }
 
     [Test]
@@ -36,10 +36,10 @@ public class SecondPassVisitorTest
         var programNode = parser.Program();
         var fpv = new FirstPassVisitor();
         var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
-        fpv.Visit((dynamic) programNode);
+        fpv.Visit((dynamic)programNode);
         try
         {
-            spv.Visit((dynamic) programNode);
+            spv.Visit((dynamic)programNode);
         }
         catch (SemanticError e)
         {
@@ -60,10 +60,10 @@ public class SecondPassVisitorTest
         var programNode = parser.Program();
         var fpv = new FirstPassVisitor();
         var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
-        fpv.Visit((dynamic) programNode);
+        fpv.Visit((dynamic)programNode);
         try
         {
-            spv.Visit((dynamic) programNode);
+            spv.Visit((dynamic)programNode);
         }
         catch (SemanticError e)
         {
@@ -83,14 +83,170 @@ public class SecondPassVisitorTest
         var programNode = parser.Program();
         var fpv = new FirstPassVisitor();
         var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
-        fpv.Visit((dynamic) programNode);
+        fpv.Visit((dynamic)programNode);
         try
         {
-            spv.Visit((dynamic) programNode);
+            spv.Visit((dynamic)programNode);
         }
         catch (SemanticError e)
         {
             Assert.IsTrue(e.Message.Contains("Var declaration found twice"));
-        }  
+        }
     }
+
+    [Test]
+    public void TestVarDeclarationFoundTwiceSeparated()
+    {
+        var program = @"main() {
+            var x;
+            var x;
+            x = 10;
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic)programNode);
+        try
+        {
+            spv.Visit((dynamic)programNode);
+        }
+        catch (SemanticError e)
+        {
+            Assert.IsTrue(e.Message.Contains("Semantic Error: Duplicated variable: x"));
+        }
+    }
+
+    [Test]
+    public void TestIncorrectBreakUsage()
+    {
+        var program = @"main() {
+            var x;
+            x = 10;
+            break;
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic)programNode);
+        try
+        {
+            spv.Visit((dynamic)programNode);
+        }
+        catch (SemanticError e)
+        {
+            Assert.IsTrue(e.Message.Contains("Incorrect usage of break statement"));
+        }
+    }
+
+    [Test]
+    public void TestAssignsToNonExistentVar()
+    {
+        var program = @"main() {
+            x = 10;
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic)programNode);
+        try
+        {
+            spv.Visit((dynamic)programNode);
+        }
+        catch (SemanticError e)
+        {
+            Assert.IsTrue(e.Message.Contains("Undeclared variable: x"));
+        }
+    }
+
+    [Test]
+    public void TestVarIsNotInScope()
+    {
+        var program = @"sqrt(x) {
+            var y;
+        }
+        main() {
+            y = 3;
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic)programNode);
+        try
+        {
+            spv.Visit((dynamic)programNode);
+        }
+        catch (SemanticError e)
+        {
+            Assert.IsTrue(e.Message.Contains("Variable not in scope: y"));
+        }
+    }
+    
+    [Test]
+    public void TestEqualComparison()
+    {
+        var program = @"main() {
+            var x;
+            x = 1;
+            if(x == 6 > 3){
+                x = 1;
+            }
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic) programNode);
+        spv.Visit((dynamic) programNode);
+    }
+    
+    [Test]
+    public void TestNotComparison()
+    {
+        var program = @"main() {
+            var x;
+            if(not x){
+                x = 1;
+            }
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic) programNode);
+        spv.Visit((dynamic) programNode);
+    }
+    
+    [Test]
+    public void TestIntTooLarge()
+    {
+        var program = @"main() {
+            var x;
+            x = 99999999999999999999999999999999999999999999999999999999999999;
+        }";
+
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        fpv.Visit((dynamic) programNode);
+        try
+        {
+            spv.Visit((dynamic)programNode);
+        }
+        catch (SemanticError e)
+        {
+            Assert.IsTrue(e.Message.Contains("Integer literal too large:"));
+        }
+    }
+
 }
