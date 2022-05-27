@@ -114,7 +114,7 @@ public class SecondPassVisitorTest
         }
         catch (SemanticError e)
         {
-            Assert.IsTrue(e.Message.Contains("Semantic Error: Duplicated variable: x"));
+            Assert.IsTrue(e.Message.Contains("Var declaration found twice: x"));
         }
     }
 
@@ -249,4 +249,50 @@ public class SecondPassVisitorTest
         }
     }
 
+    [Test]
+    public void TestMultilineVariableDeclaration()
+    {
+        var program = @"main(x) {
+            var i;
+            var j;
+            var k;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) programNode);
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        spv.Visit((dynamic) programNode);
+        var refLst = spv.FGST["main"].refLST;
+        Assert.AreEqual(4, refLst.Count);
+        Assert.AreEqual("x", refLst.ToList()[0]);
+        Assert.AreEqual("i", refLst.ToList()[1]);
+        Assert.AreEqual("j", refLst.ToList()[2]);
+        Assert.AreEqual("k", refLst.ToList()[3]);
+        
+    }
+    
+    
+    [Test]
+    public void TestMultilineVariableDeclaration2()
+    {
+        var program = @"main(x) {
+            var i, j, k;
+            var l;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) programNode);
+        var spv = new SecondPassVisitor(fpv.FGST, fpv.VGST);
+        spv.Visit((dynamic) programNode);
+        var refLst = spv.FGST["main"].refLST;
+        Assert.AreEqual(5, refLst.Count);
+        Assert.AreEqual("x", refLst.ToList()[0]);
+        Assert.AreEqual("i", refLst.ToList()[1]);
+        Assert.AreEqual("j", refLst.ToList()[2]);
+        Assert.AreEqual("k", refLst.ToList()[3]);
+        Assert.AreEqual("l", refLst.ToList()[4]);
+        
+    }
 }

@@ -22,31 +22,40 @@ public class SecondPassVisitor
             Visit((dynamic) child);
         }
     }
-    
-    public void Visit(If node) {
+
+    public void Visit(If node)
+    {
         Visit((dynamic) node[0]); // Expr
         Visit((dynamic) node[1]); // Stmtlist
         Visit((dynamic) node[2]); // ElseIfList
         Visit((dynamic) node[3]); // Else
     }
 
-    public void Visit(Elif node) {
+    public void Visit(Elif node)
+    {
         //Console.WriteLine("Elif");
         Visit((dynamic) node[0]); // Expr
         Visit((dynamic) node[1]); // StmtList
     }
-    public void Visit(ElifList node) {
+
+    public void Visit(ElifList node)
+    {
         //Console.WriteLine("ElifList");
-        if (node.CountChildren() > 0){
+        if (node.CountChildren() > 0)
+        {
             VisitChildren(node);
         }
     }
-    public void Visit(Else node) {
+
+    public void Visit(Else node)
+    {
         //Console.WriteLine("Else");
-        if (node.CountChildren() > 0){
+        if (node.CountChildren() > 0)
+        {
             VisitChildren(node);
         }
     }
+
     public void Visit(Function node)
     {
         CurrentFunction = node[0].AnchorToken.Lexeme;
@@ -63,22 +72,26 @@ public class SecondPassVisitor
         VisitChildren(node);
     }
 
-    public void Visit(Loop node) {
+    public void Visit(Loop node)
+    {
         //Console.WriteLine("Loop");
         LoopLevel++;
-        Visit((dynamic)node[0]); // StmtList
+        Visit((dynamic) node[0]); // StmtList
         LoopLevel--;
     }
-    
-    public void Visit(StmtBreak node) {
-        if (LoopLevel == 0){
+
+    public void Visit(StmtBreak node)
+    {
+        if (LoopLevel == 0)
+        {
             throw new SemanticError($"Incorrect usage of break statement", node.AnchorToken);
         }
     }
+
     public void Visit(VarDefList node)
     {
-        if (node[0].CountChildren() > 0)
-            DeclareInScope(node[0]);
+        foreach (var child in node)
+            DeclareInScope(child);
         VisitChildren(node);
     }
 
@@ -136,16 +149,19 @@ public class SecondPassVisitor
         Visit((dynamic) node[0]);
         Visit((dynamic) node[1]);
     }
+
     public void Visit(LowerEqual node)
     {
         Visit((dynamic) node[0]);
         Visit((dynamic) node[1]);
     }
+
     public void Visit(GreaterEqual node)
     {
         Visit((dynamic) node[0]);
         Visit((dynamic) node[1]);
     }
+
     public void Visit(GreaterThan node)
     {
         Visit((dynamic) node[0]);
@@ -181,13 +197,17 @@ public class SecondPassVisitor
         Visit((dynamic) node[0]);
     }
 
-    public void Visit(And node) {
+    public void Visit(And node)
+    {
         Visit((dynamic) node[0]);
         Visit((dynamic) node[1]);
     }
-    public void Visit(Or node) {
+
+    public void Visit(Or node)
+    {
         VisitChildren(node);
     }
+
     public void Visit(True node)
     {
     }
@@ -242,21 +262,25 @@ public class SecondPassVisitor
             Visit((dynamic) n);
         }
     }
-    
-    public void Visit(StmtInc node) {
+
+    public void Visit(StmtInc node)
+    {
         Visit((dynamic) node[0]);
     }
-    
-    public void Visit(StmtDec node) {
+
+    public void Visit(StmtDec node)
+    {
         Visit((dynamic) node[0]);
     }
 
     public void Visit(FunCall node)
     {
         var exprListNode = node[1];
-        if(FGST.ContainsKey(node[0].AnchorToken.Lexeme)){
+        if (FGST.ContainsKey(node[0].AnchorToken.Lexeme))
+        {
             var functionInfo = FGST[node[0].AnchorToken.Lexeme];
-            if (functionInfo.arity != exprListNode.CountChildren()){
+            if (functionInfo.arity != exprListNode.CountChildren())
+            {
                 throw new SemanticError(
                     $"Incorrect number of params for function: '{node[0].AnchorToken.Lexeme}', should be {functionInfo.arity} not {exprListNode.CountChildren()} :)",
                     node[0].AnchorToken
@@ -271,6 +295,7 @@ public class SecondPassVisitor
             );
         }
     }
+
     public void Visit(ExprList node)
     {
         VisitChildren(node);
@@ -280,18 +305,28 @@ public class SecondPassVisitor
     {
         VisitChildren(node);
     }
-    
+
 
     private void DeclareInScope(Node paramList)
     {
         var localTable = FGST[CurrentFunction].refLST;
         foreach (var param in paramList)
         {
-            var varName = param.AnchorToken.Lexeme;
-            if (!localTable.Contains(varName))
-                localTable.Add(varName);
+            var varName = "NOT CAPTURED";
+            if (param.CountChildren() > 0)
+                varName = param[0].AnchorToken.Lexeme;
             else
-                throw new SemanticError("Var declaration found twice: ", param.AnchorToken);
+                varName = param.AnchorToken.Lexeme;
+            if (!localTable.Contains(varName))
+            {
+                localTable.Add(varName);
+            }
+            else
+            {
+                if (param.CountChildren() > 0)
+                    throw new SemanticError($"Var declaration found twice: {param[0].AnchorToken.Lexeme}", param[0].AnchorToken);
+                throw new SemanticError($"Var declaration found twice: {param.AnchorToken.Lexeme}", param.AnchorToken);
+            }
         }
     }
 }
