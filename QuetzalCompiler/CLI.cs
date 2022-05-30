@@ -30,7 +30,7 @@ public class CLI
 
         try
         {
-            var inputPath = "/Users/quality/RiderProjects/QuetzalSolution/QuetzalCompiler/001_hello.quetzal";
+            var inputPath = "/Users/Alex Serrano/RiderProjects/quetzal-compiler-final/QuetzalCompiler/001_hello.quetzal";
             var input = File.ReadAllText(inputPath);
 
             Console.WriteLine(

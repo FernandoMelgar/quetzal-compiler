@@ -42,6 +42,18 @@ public class FirstPassVisitorTest
         var fpv = new FirstPassVisitor();
         Assert.Throws<SemanticError>(() => fpv.Visit((dynamic) node));
     }
+    
+    [Test]
+    public void TestThrowErrorIfMainHasParams()
+    {
+        var program = @"var id; main(id){}";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var node = parser.Program();
+        var fpv = new FirstPassVisitor();
+        Assert.Throws<SemanticError>(() => fpv.Visit((dynamic) node));
+    }
+    
+    
    
     
 }

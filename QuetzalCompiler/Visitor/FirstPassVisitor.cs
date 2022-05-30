@@ -40,6 +40,14 @@ public class FirstPassVisitor
     public void Visit(Function node)
     {
         var funName = node[0].AnchorToken.Lexeme;
+        if (funName == "main")
+        {
+            var arity = node[1].CountChildren();
+            if (arity != 0)
+            {
+                throw new SemanticError("Function 'main' should have no parameters");
+            }
+        }
         if (!FGST.ContainsKey(funName))
         {
             var arity = node[1].CountChildren();
