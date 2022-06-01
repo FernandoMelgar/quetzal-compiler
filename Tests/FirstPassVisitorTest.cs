@@ -53,7 +53,24 @@ public class FirstPassVisitorTest
         Assert.Throws<SemanticError>(() => fpv.Visit((dynamic) node));
     }
     
-    
-   
-    
+    [Test]
+    public void TestThrowErrorIfFunctionDeclarationIsTwiceWithDifferentArities() 
+    {
+        var program = @"var id; sum(x, y){} sum (x){} main() {}";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var node = parser.Program();
+        var fpv = new FirstPassVisitor();
+        Assert.Throws<SemanticError>(() => fpv.Visit((dynamic) node));
+    }
+
+    [Test] public void TestThrowErrorIfMainIsNotDeclared()
+    {
+        var program = @"var id;";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var node = parser.Program();
+        var fpv = new FirstPassVisitor();
+        Assert.Throws<SemanticError>(() => fpv.Visit((dynamic) node));
+    }
+
+
 }

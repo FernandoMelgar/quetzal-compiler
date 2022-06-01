@@ -26,6 +26,11 @@ public class FirstPassVisitor
         {
             Visit((dynamic) child);
         }
+
+        if (!FGST.ContainsKey("main"))
+        {
+            throw new SemanticError("Function 'main' not found");
+        }
     }
 
     public void Visit(VarDef node)
@@ -48,12 +53,15 @@ public class FirstPassVisitor
                 throw new SemanticError("Function 'main' should have no parameters");
             }
         }
+
         if (!FGST.ContainsKey(funName))
         {
             var arity = node[1].CountChildren();
             FGST[funName] = new ParamsFGST(false, arity, new HashSet<string>());
         }
         else
-            throw new SemanticError("Function definition found Twice", node.AnchorToken);
+        {
+            throw new SemanticError("Function definition of " + funName + " found twice");
+        }
     }
 }

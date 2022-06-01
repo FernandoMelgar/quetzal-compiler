@@ -3,7 +3,7 @@
    specified requirements.
    (C) 2022 Ariel Ortiz, ITESM CEM.
  */
- 
+
 sqr(x) {
     return x * x;
 }
