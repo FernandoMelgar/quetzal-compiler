@@ -252,7 +252,8 @@ public class SecondPassVisitorTest
     [Test]
     public void TestMultilineVariableDeclaration()
     {
-        var program = @"main(x) {
+        var program = @"main() {
+            var x;
             var i;
             var j;
             var k;
@@ -276,7 +277,8 @@ public class SecondPassVisitorTest
     [Test]
     public void TestMultilineVariableDeclaration2()
     {
-        var program = @"main(x) {
+        var program = @"main() {
+            var x;
             var i, j, k;
             var l;
         }";

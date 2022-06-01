@@ -11,7 +11,7 @@ sqr(x) {
     return x * x;
 }
 
-sqr() {}
+sqr(x, y) {}
 
 main() {
     var array, sum, i, j, x;

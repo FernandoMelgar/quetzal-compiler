@@ -65,7 +65,7 @@ public class FirstPassVisitor
         }
         else
         {
-            throw new SemanticError("Function definition of " + funName + " found twice");
+            throw new SemanticError("Function definition of " + funName + " found twice", node[0].AnchorToken);
         }
     }
 }
