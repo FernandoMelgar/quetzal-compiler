@@ -4,9 +4,14 @@
    (C) 2022 Ariel Ortiz, ITESM CEM.
  */
 
+var global1, global2, global3;
+var global4;
+
 sqr(x) {
     return x * x;
 }
+
+sqr() {}
 
 main() {
     var array, sum, i, j, x;

@@ -185,7 +185,7 @@ public class SecondPassVisitorTest
         }
         catch (SemanticError e)
         {
-            Assert.IsTrue(e.Message.Contains("Variable not in scope: y"));
+            Assert.IsTrue(e.Message.Contains("Semantic Error: Undeclared variable: y "));
         }
     }
     
@@ -293,6 +293,20 @@ public class SecondPassVisitorTest
         Assert.AreEqual("j", refLst.ToList()[2]);
         Assert.AreEqual("k", refLst.ToList()[3]);
         Assert.AreEqual("l", refLst.ToList()[4]);
+    }
+
+    [Test]
+    public void TestDeclareSameLineVgst()
+    {
+        var program = @"
+        var global1, global2, global3;
+        main() {
+        }";
         
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var programNode = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) programNode);
+        Assert.AreEqual(3, fpv.VGST.Count);
     }
 }

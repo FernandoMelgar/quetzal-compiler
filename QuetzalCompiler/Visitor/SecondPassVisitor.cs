@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace QuetzalCompiler.Visitor;
 
 public class SecondPassVisitor
@@ -101,7 +99,7 @@ public class SecondPassVisitor
     {
         var variableName = node[0].AnchorToken.Lexeme;
         if (!VGST.Contains(variableName))
-            Console.Write("");
+            VGST.Add(variableName);
         else
             throw new SemanticError(
                 "Duplicated variable: " + variableName,

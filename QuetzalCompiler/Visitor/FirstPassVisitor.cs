@@ -35,11 +35,15 @@ public class FirstPassVisitor
 
     public void Visit(VarDef node)
     {
-        var varName = node[0].AnchorToken.Lexeme;
-        if (!VGST.Contains(varName))
-            VGST.Add(varName);
-        else
-            throw new SemanticError("Var declaration found Twice", node[0].AnchorToken);
+        foreach (var child in node)
+        {
+            var varName = child.AnchorToken.Lexeme;
+            if (!VGST.Contains(varName))
+                VGST.Add(varName);
+            else
+                throw new SemanticError("Var declaration found Twice", child.AnchorToken);
+        }
+
     }
 
     public void Visit(Function node)
