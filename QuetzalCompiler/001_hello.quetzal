@@ -11,8 +11,6 @@ sqr(x) {
     return x * x;
 }
 
-sqr(x, y) {}
-
 main() {
     var array, sum, i, j, x;
     array = [1 + 1, 2 * 3 * 2, 2 * sqr(3) + 2, 20 - (2 + 2 == 4),  5, 4
