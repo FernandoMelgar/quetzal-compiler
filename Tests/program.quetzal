@@ -1,0 +1,14 @@
+/* File: breaks.quetzal
+   Verifies that the implementation of the break statement meets the
+   specified requirements.
+   (C) 2022 Ariel Ortiz, ITESM CEM.
+ */
+
+var hello;
+
+main() {
+    var array;
+    array = [true and true and true or false and true];
+    sum = 0;
+
+}

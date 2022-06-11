@@ -548,30 +548,26 @@ public class Parser
             var exprList = ExprList();
             Expect(TokenCategory.PAR_RIGHT);
             return exprList;
-        } else if (CurrentTokenCategory == TokenCategory.IDENTIFIER)
+        }
+
+        if (CurrentTokenCategory == TokenCategory.IDENTIFIER)
         {
             var id = Id();
-            if (CurrentTokenCategory == TokenCategory.PAR_LEFT)
-            {
-               //  FUNCTION-CALL    
-                Expect(TokenCategory.PAR_LEFT);
-                var functionCall = new FunCall() {id, ExprList()};
-                Expect(TokenCategory.PAR_RIGHT);
-                return functionCall; 
-            }
-            else
-            {
-                return id;
-            }
-        }
-        else if (CurrentTokenCategory == TokenCategory.BRACKET_LEFT)
-            return Array();
-        else if (firstOfLit.Contains(CurrentTokenCategory))
-            return Lit();
-        else
-            throw new SyntaxError(TokenCategory.IDENTIFIER, _tokenStream.Current);
+            if (CurrentTokenCategory != TokenCategory.PAR_LEFT) return id;
+            
+            //  FUNCTION-CALL    
+            Expect(TokenCategory.PAR_LEFT);
+            var functionCall = new FunCall() {id, ExprList()};
+            Expect(TokenCategory.PAR_RIGHT);
+            return functionCall;
 
-        return new NotImplementedNode();
+        }
+
+        if (CurrentTokenCategory == TokenCategory.BRACKET_LEFT)
+            return Array();
+        if (firstOfLit.Contains(CurrentTokenCategory))
+            return Lit();
+        throw new SyntaxError(TokenCategory.IDENTIFIER, _tokenStream.Current);
     }
 
     public Node Lit()

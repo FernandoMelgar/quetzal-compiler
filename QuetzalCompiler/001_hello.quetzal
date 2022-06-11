@@ -1,61 +1,54 @@
-/* File: 002_binary.quetzal
-   Converts decimal numbers into binary.
+/* File: breaks.quetzal
+   Verifies that the implementation of the break statement meets the
+   specified requirements.
    (C) 2022 Ariel Ortiz, ITESM CEM.
-*/
+ */
 
-// Inverts in-place the contents of an array list.
-reverse(array) {
-    var start, finish, temp;
-    start = 0;
-    finish = size(array) - 1;
-    loop {
-        if (start >= finish) {
-           break;
-        }
-        temp = get(array, start);
-        set(array, start, get(array, finish));
-        set(array, finish, temp);
-        inc start;
-        dec finish;
-    }
+var global1, global2, global3;
+var global4;
+
+sqr(x) {
+    return x * x;
 }
 
-// Converts num to a string with its binary representation.
-binary(num) {
-    var result, remainder;
-    if (num <= 0) {
-        return "0";
-    }
-    result = "";
-    loop {
-        if (num <= 0) {
-            break;
-        }
-        remainder = num % 2;
-        add(result, remainder + '0');
-        num = num / 2;
-    }
-    reverse(result);
-    return result;
-}
+sqr(x, y) {}
 
 main() {
-    var option, num;
+    var array, sum, i, j, x;
+    array = [1 + 1, 2 * 3 * 2, 2 * sqr(3) + 2, 20 - (2 + 2 == 4),  5, 4
+        * 2, 2 * 8, 2 + 2 == 5, sqr(5) - 2, 5 * 2 + 1, 1 + sqr(4), -3 +
+        sqr(sqr(2)), 10 + 8, 30 - 6 - 2, 2 * (3 * 2 - 1), sqr(3) * (5 *
+        2 + 1),  8 * 7, sqr(4),  2 + 3 < 2 * 3, -1 + 2 * 2, sqr(2), (3 +
+        4 ) * 2,  -10 + 17,  3 * (2 + 1), 7 + 3 * sqr(2)];
+    sum = 0;
+    i = 0;
     loop {
-        prints("Input a number: ");
-        num = readi();
-        prints("Conversion to binary of that number: ");
-        prints(binary(num));
-        println();
-        prints("Convert another number? ");
-        option = reads();
-        if (size(option) == 0) {
-            option = 'N';
-        } else {
-            option = get(option, 0);
-        }
-        if (option != 'Y' and option != 'y') {
+        if (i >= size(array)) {
             break;
         }
+        x = get(array, i);
+        inc i;
+        if (x == 99) {
+            break;
+        }
+        if (x <= 2) {
+        } else {
+            j = 1;
+            loop {
+                inc j;
+                if (j > x) {
+                    break;
+                } elif (x == j) {
+                    sum = sum + x;
+                } elif (x % j == 0) {
+                    break;
+                }
+            }
+        }
+    }
+    if (sum == 88) {
+        prints("The program works fine!\n");
+    } else {
+        prints("This program sucks!\n");
     }
 }
