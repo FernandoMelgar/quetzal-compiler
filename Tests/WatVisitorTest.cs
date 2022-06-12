@@ -360,12 +360,7 @@ public class WatVisitorTest
     {
         var program = @"
         main() {
-            var x;
-            var y;
             loop {
-                inc x;
-                inc y;
-                break;
             }
         }";
         var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
@@ -376,12 +371,7 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains(@"    (local $x i32)
-    (local $y i32)
-    block $00001
-        loop $00001
-            
-            "));
+        Assert.True(result.Contains("    block $00000\n      loop $00001\n        br $00001\n      end\n    end"));
     }
 
 
@@ -423,7 +413,7 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    else\n    i32.const 4\n    local.set $x\n    end\n    i32.const 0"));
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s\n    if\n      i32.const 3\n      local.set $x\n    else\n      i32.const 4\n      local.set $x\n    end"));
     }
 
     [Test]
@@ -448,9 +438,7 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    else\n    i32.const 4\n    i32.const 5\n    i32.lt_s\n"));
-        Assert.True(result.Contains("    if\n    i32.const 6\n    local.set $x\n"));
-        Assert.True(result.Contains("    else\n    i32.const 7\n    local.set $x\n    end\n    end\n    i32.const 0"));
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s\n    if\n      i32.const 3\n      local.set $x\n    else\n      i32.const 4\n      i32.const 5\n      i32.lt_s\n      if\n        i32.const 6\n        local.set $x\n      else\n        i32.const 7\n        local.set $x\n      end\n    end"));
     }
 
     [Test]

@@ -29,7 +29,7 @@ public class WatVisitor
     public WatVisitor(IDictionary<string, ParamsFGST> table, HashSet<string> fpvVgst)
     {
         this.table = table;
-        this.varTable = fpvVgst;
+        varTable = fpvVgst;
     }
 
     int _labelCounter = 0;
@@ -41,28 +41,27 @@ public class WatVisitor
 
     public string Visit(DefList node)
     {
-        
         var sb = new StringBuilder()
-            .Append("(module\n")
-            .Append("") //TODO: Imports de funciones default
-            .Append(VisitGlobalVars());
+            .Append("(module\n");
+        IncreaseIndentation();
+        sb.Append(""); //TODO: Imports de funciones default
+        sb.Append(VisitGlobalVars());
         foreach (var child in node)
         {
             if (child.GetType().Name == "VarDef")
                 continue;
             sb.Append(Visit((dynamic) child));
         }
-        return sb.ToString();
+
+        DecreaseIndentation();
+        return sb.Append(')').ToString();
     }
 
     private string VisitGlobalVars()
     {
         var sb = new StringBuilder();
         foreach (var varName in varTable)
-        {
-            sb.Append($"  (global ${varName} (mut i32) (i32.const 0))\n");
-        }
-
+            sb.Append($"{_t}(global ${varName} (mut i32) (i32.const 0))\n");
         return sb.ToString();
     }
 
@@ -73,33 +72,29 @@ public class WatVisitor
         if (CurrentFunction == "main")
             return VisitMain(node);
         var paramList = node[1];
-        Visit((dynamic) paramList);
-        var varDefList = node[2];
-
-        var sb = new StringBuilder();
-        sb.Append($"  (func ${CurrentFunction})\n" +
-                  Visit((dynamic) paramList) +
-                  $"    (result i32)\n" +
-                  Visit((dynamic) varDefList) +
-                  Visit((dynamic) node[3]) + // Stmt List
-                  $"    i32.const 0\n" +
-                  $"  )\n");
-
-        return sb.ToString();
+        var sb = new StringBuilder().Append($"{_t}(func ${CurrentFunction})\n");
+        IncreaseIndentation();
+        sb.Append(Visit((dynamic) paramList))
+            .Append($"{_t}(result i32)\n")
+            .Append(Visit((dynamic) node[2]))
+            .Append(Visit((dynamic) node[3]))
+            .Append($"{_t}i32.const 0\n");
+        DecreaseIndentation();
+        return sb.Append($"{_t})\n").ToString();
     }
 
     private string VisitMain(Function node)
     {
-        var varDefList = node[2];
-        var sb = new StringBuilder();
-        sb.Append($"  (func\n" +
-                  $"    (export \"main\")\n" + // Param List
-                  $"    (result i32)\n" +
-                  Visit((dynamic) varDefList) + // VarDefList
-                  Visit((dynamic) node[3]) + // Stmt List
-                  $"    i32.const 0\n" +
-                  $"  )\n");
-
+        var sb = new StringBuilder()
+            .Append($"{_t}(func\n");
+        IncreaseIndentation();
+        sb.Append($"{_t}(export \"main\")\n")
+            .Append($"{_t}(result i32)\n")
+            .Append(Visit((dynamic) node[2])) //VarDefList
+            .Append(Visit((dynamic) node[3])) //StmtList
+            .Append($"{_t}i32.const 0\n");
+        DecreaseIndentation();
+        sb.Append($"{_t})\n");
         return sb.ToString();
     }
 
@@ -107,34 +102,24 @@ public class WatVisitor
     {
         var sb = new StringBuilder();
         foreach (var n in node)
-        {
-            sb.Append($"    (param ${n.AnchorToken.Lexeme} i32)\n");
-        }
-
+            sb.Append($"{_t}(param ${n.AnchorToken.Lexeme} i32)\n");
         return sb.ToString();
     }
 
-    public string Visit(VarDefList node)
+    public string Visit(VarDefList _)
     {
         var sb = new StringBuilder();
         var localTable = table[CurrentFunction].refLST;
         foreach (var varName in localTable)
-        {
-            sb.Append($"    (local ${varName} i32)\n");
-        }
-
+            sb.Append($"{_t}(local ${varName} i32)\n");
         return sb.ToString();
     }
 
-
-    public string VisitChildren(Node node)
+    private string VisitChildren(Node node)
     {
         var sb = new StringBuilder();
         foreach (var n in node)
-        {
             sb.Append(Visit((dynamic) n));
-        }
-
         return sb.ToString();
     }
 
@@ -146,47 +131,46 @@ public class WatVisitor
     public string Visit(Assign node)
     {
         var varName = node[0].AnchorToken.Lexeme;
-        var sb = new StringBuilder()
-            .Append(Visit((dynamic) node[1]));
-        if (varTable.Contains(varName))
-            sb.Append($"    global.set ${varName}\n");
-        else
-            sb.Append($"    local.set ${varName}\n");
-        return sb.ToString();
+        return new StringBuilder()
+            .Append(Visit((dynamic) node[1]))
+            .Append(varTable.Contains(varName)
+                ? $"{_t}global.set ${varName}\n"
+                : $"{_t}local.set ${varName}\n")
+            .ToString();
     }
 
     public string Visit(Int node)
     {
         return node.AnchorToken.Lexeme.Contains('-')
-            ? $"    i32.const 0\n    i32.const {node.AnchorToken.Lexeme[1..]}\n    i32.sub\n"
-            : $"    i32.const {node.AnchorToken.Lexeme}\n";
+            ? $"{_t}i32.const 0\n{_t}i32.const {node.AnchorToken.Lexeme[1..]}\n{_t}i32.sub\n"
+            : $"{_t}i32.const {node.AnchorToken.Lexeme}\n";
     }
 
     public string Visit(StmtInc node)
     {
         return new StringBuilder()
-            .Append("    i32.const 1\n")
-            .Append($"    local.get ${node[0].AnchorToken.Lexeme}\n")
-            .Append("    $i32.add\n")
-            .Append($"    local.set ${node[0].AnchorToken.Lexeme}\n")
+            .Append($"{_t}i32.const 1\n")
+            .Append($"{_t}local.get ${node[0].AnchorToken.Lexeme}\n")
+            .Append($"{_t}$i32.add\n")
+            .Append($"{_t}local.set ${node[0].AnchorToken.Lexeme}\n")
             .ToString();
     }
 
     public string Visit(StmtDec node)
     {
         return new StringBuilder()
-            .Append($"    local.get ${node[0].AnchorToken.Lexeme}\n")
-            .Append("    i32.const 1\n")
-            .Append("    $i32.sub\n")
-            .Append($"    local.set ${node[0].AnchorToken.Lexeme}\n")
+            .Append($"{_t}local.get ${node[0].AnchorToken.Lexeme}\n")
+            .Append($"{_t}i32.const 1\n")
+            .Append($"{_t}$i32.sub\n")
+            .Append($"{_t}local.set ${node[0].AnchorToken.Lexeme}\n")
             .ToString();
     }
 
     public string Visit(Not node)
     {
         return new StringBuilder()
-            .Append($"    i32.const {node[0].AnchorToken.Lexeme}\n")
-            .Append("    i32.eqz\n")
+            .Append($"{_t}i32.const {node[0].AnchorToken.Lexeme}\n")
+            .Append($"{_t}i32.eqz\n")
             .ToString();
     }
 
@@ -195,15 +179,18 @@ public class WatVisitor
         _currentBreakLabel = GenerateLabel();
         var loopLabel = GenerateLabel();
         var sb = new StringBuilder()
-            .Append($"    block {_currentBreakLabel}\n")
-            .Append($"      loop {loopLabel}\n");
-
+            .Append($"{_t}block {_currentBreakLabel}\n");
+        IncreaseIndentation();
+        sb.Append($"{_t}loop {loopLabel}\n");
+        IncreaseIndentation();
         foreach (var child in node[0])
-            sb.Append($"-   {Visit((dynamic) child)}\n");
-
-        return sb.Append($"            br {loopLabel}\n")
-            .Append("        end\n")
-            .Append("    end\n").ToString();
+            sb.Append(Visit((dynamic) child));
+        sb.Append($"{_t}br {loopLabel}\n");
+        DecreaseIndentation();
+        sb.Append($"{_t}end\n");
+        DecreaseIndentation();
+        return sb.Append($"{_t}end\n")
+            .ToString();
     }
 
     public string Visit(ExprList node)
@@ -213,51 +200,48 @@ public class WatVisitor
 
     public string Visit(If node)
     {
-        var sb = new StringBuilder();
-
-
-        sb.Append(Visit((dynamic) node[0])); // Expr
-        sb.Append($"    if\n");
+        var sb = new StringBuilder()
+            .Append(Visit((dynamic) node[0])) // Expr
+            .Append($"{_t}if\n");
+        IncreaseIndentation();
         sb.Append(Visit((dynamic) node[1])); // StmtList
-        sb.Append(Visit((dynamic) node[2])); // ElseIfList
-
-        if (node[3].CountChildren() > 0)
-        {
-            sb.Append(Visit((dynamic) node[3])); // Else
-        }
-        else
-        {
-            sb.Append($"    end\n");
-        }
-
+        DecreaseIndentation();
+        var baseIndentationLevel = _identationLevel;
         if (node[2].CountChildren() > 0)
+            sb.Append(Visit((dynamic) node[2])); // ElseIfList
+        if (node[3].CountChildren() > 0)
+            sb.Append(Visit((dynamic) node[3])); // Else
+        do
         {
-            sb.Append($"    end\n");
-        }
-
+            sb.Append($"{_t}end\n");
+            DecreaseIndentation();
+        } while (_identationLevel >= baseIndentationLevel);
+        IncreaseIndentation(); // Compesa un identation que estoy quitando de más en el loop
         return sb.ToString();
     }
 
     public string Visit(Elif node)
     {
         var sb = new StringBuilder();
-        sb.Append($"    else\n");
-        sb.Append(Visit((dynamic) node[0])); // Expr
-        sb.Append($"    if\n");
+        DecreaseIndentation();
+        sb.Append($"{_t}else\n");
+        IncreaseIndentation();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append($"{_t}if\n");
+        IncreaseIndentation();
         sb.Append(Visit((dynamic) node[1])); // StmtList
-
+        DecreaseIndentation();
         return sb.ToString();
     }
 
     public string Visit(ElifList node)
     {
-        //Console.WriteLine("ElifList");
         var sb = new StringBuilder();
-        if (node.CountChildren() > 0)
+        foreach (var child in node)
         {
-            sb.Append(VisitChildren(node));
+            IncreaseIndentation();
+            sb.Append(Visit((dynamic) child));
         }
-
 
         return sb.ToString();
     }
@@ -265,13 +249,11 @@ public class WatVisitor
     public string Visit(Else node)
     {
         var sb = new StringBuilder();
-        sb.Append("    else\n");
+        sb.Append($"{_t}else\n");
+        IncreaseIndentation();
         if (node.CountChildren() > 0)
-        {
             sb.Append(VisitChildren(node));
-        }
-
-        sb.Append("    end\n");
+        DecreaseIndentation();
         return sb.ToString();
     }
 
@@ -281,7 +263,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.lt_s\n");
+        sb.Append($"{_t}i32.lt_s\n");
         return sb.ToString();
     }
 
@@ -290,7 +272,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.le_s\n");
+        sb.Append($"{_t}i32.le_s\n");
         return sb.ToString();
     }
 
@@ -299,7 +281,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.ge_s\n");
+        sb.Append($"{_t}i32.ge_s\n");
         return sb.ToString();
     }
 
@@ -308,7 +290,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.gt_s\n");
+        sb.Append($"{_t}i32.gt_s\n");
         return sb.ToString();
     }
 
@@ -317,7 +299,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.eq\n");
+        sb.Append($"{_t}i32.eq\n");
         return sb.ToString();
     }
 
@@ -326,7 +308,7 @@ public class WatVisitor
         var sb = new StringBuilder();
         sb.Append(Visit((dynamic) node[0]));
         sb.Append(Visit((dynamic) node[1]));
-        sb.Append($"    i32.ne\n");
+        sb.Append($"{_t}i32.ne\n");
         return sb.ToString();
     }
 }
