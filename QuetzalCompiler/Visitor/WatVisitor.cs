@@ -135,4 +135,127 @@ public class WatVisitor
     {
         return $"    i32.const {node.AnchorToken.Lexeme}\n";
     }
+
+    public string Visit(ExprList node)
+    {
+        return VisitChildren(node);
+    }  
+    
+    public string Visit(If node)
+    {
+        var sb = new StringBuilder();
+        
+        
+        sb.Append(Visit((dynamic) node[0])); // Expr
+        sb.Append($"    if\n");
+        sb.Append(Visit((dynamic) node[1])); // StmtList
+        sb.Append(Visit((dynamic) node[2])); // ElseIfList
+        
+        if (node[3].CountChildren() > 0){
+            sb.Append(Visit((dynamic) node[3])); // Else
+        }
+        else
+        {
+            sb.Append($"    end\n");
+        }
+        if (node[2].CountChildren() > 0)
+        {
+            sb.Append($"    end\n");
+        }
+        return sb.ToString();
+    }
+    
+    public string Visit(Elif node)
+    {
+        var sb = new StringBuilder();
+        sb.Append($"    else\n");
+        sb.Append(Visit((dynamic) node[0])); // Expr
+        sb.Append($"    if\n");
+        sb.Append(Visit((dynamic) node[1])); // StmtList
+        
+        return sb.ToString();
+    }
+
+    public string Visit(ElifList node)
+    {
+        //Console.WriteLine("ElifList");
+        var sb = new StringBuilder();
+        if (node.CountChildren() > 0)
+        {
+            sb.Append(VisitChildren(node));
+        }
+        
+
+        return sb.ToString();
+    }
+    
+    public string Visit(Else node)
+    {
+        var sb = new StringBuilder();
+        sb.Append("    else\n");
+        if (node.CountChildren() > 0)
+        {
+            sb.Append(VisitChildren(node));
+        }
+
+        sb.Append("    end\n");
+        return sb.ToString();
+    }
+
+    
+    
+    public string Visit(LowerThan node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.lt_s\n");
+        return sb.ToString();
+    }
+
+    public string Visit(LowerEqual node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.le_s\n");
+        return sb.ToString();
+    }
+
+    public string Visit(GreaterEqual node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.ge_s\n");
+        return sb.ToString();
+    }
+
+    public string Visit(GreaterThan node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.gt_s\n");
+        return sb.ToString();
+    }
+
+    public string Visit(EqualComparison node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.eq\n");
+        return sb.ToString();
+    }
+
+    public string Visit(NotEqualComparison node)
+    {
+        var sb = new StringBuilder();
+        sb.Append(Visit((dynamic) node[0]));
+        sb.Append(Visit((dynamic) node[1]));
+        sb.Append($"    i32.ne\n");
+        return sb.ToString();
+    }
+    
 }

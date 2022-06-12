@@ -174,6 +174,152 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s"));
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s\n    if\n    end\n    i32.const 0"));
     }
+    
+    [Test]
+    public void TestLowerEqualThan()
+    {
+        var program = @"
+        main() {
+            if (1 <= 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.le_s\n    if\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestGreaterEqualThan()
+    {
+        var program = @"
+        main() {
+            if (1 >= 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.ge_s\n    if\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestGreaterThan()
+    {
+        var program = @"
+        main() {
+            if (1 > 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.gt_s\n    if\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestEqual()
+    {
+        var program = @"
+        main() {
+            if (1 == 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.eq\n    if\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestNotEqual()
+    {
+        var program = @"
+        main() {
+            if (1 != 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.ne\n    if\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestElse()
+    {
+        var program = @"
+        main() {
+            var x;
+            if (1 < 2) {
+                x = 3;
+            }else{
+                x = 4;
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    else\n    i32.const 4\n    local.set $x\n    end\n    i32.const 0"));
+    }
+    
+    [Test]
+    public void TestElseIf()
+    {
+        var program = @"
+        main() {
+            var x;
+            if (1 < 2) {
+                x = 3;
+            }elif (4 < 5){
+                x = 6;
+            }else{
+                x = 7;
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    else\n    i32.const 4\n    i32.const 5\n    i32.lt_s\n"));
+        Assert.True(result.Contains("    if\n    i32.const 6\n    local.set $x\n"));
+        Assert.True(result.Contains("    else\n    i32.const 7\n    local.set $x\n    end\n    end\n    i32.const 0"));
+    }
+    
 }
