@@ -174,9 +174,10 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s\n    if\n    end\n    i32.const 0"));
+        Assert.True(
+            result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s\n    if\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestLowerEqualThan()
     {
@@ -193,9 +194,10 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.le_s\n    if\n    end\n    i32.const 0"));
+        Assert.True(
+            result.Contains("    i32.const 1\n    i32.const 2\n    i32.le_s\n    if\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestGreaterEqualThan()
     {
@@ -212,9 +214,10 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.ge_s\n    if\n    end\n    i32.const 0"));
+        Assert.True(
+            result.Contains("    i32.const 1\n    i32.const 2\n    i32.ge_s\n    if\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestGreaterThan()
     {
@@ -231,9 +234,10 @@ public class WatVisitorTest
         spv.Visit((dynamic) ast);
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
-        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.gt_s\n    if\n    end\n    i32.const 0"));
+        Assert.True(
+            result.Contains("    i32.const 1\n    i32.const 2\n    i32.gt_s\n    if\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestEqual()
     {
@@ -252,7 +256,7 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.eq\n    if\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestNotEqual()
     {
@@ -291,7 +295,7 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 1\n    local.get $x\n    $i32.add\n    local.set $x"));
     }
-    
+
     [Test]
     public void TestStmtDec()
     {
@@ -311,7 +315,7 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    local.get $x\n    i32.const 1\n    $i32.sub\n    local.set $x"));
     }
-    
+
     [Test]
     public void TestAssignNegativeNumber()
     {
@@ -330,7 +334,7 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 0\n    i32.const 99\n    i32.sub\n    local.set $x"));
     }
-    
+
     [Test]
     public void TestNot()
     {
@@ -349,8 +353,8 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 2\n    i32.eqz\n    local.set $x"));
     }
-    
-     
+
+
     [Test]
     public void TestLoop()
     {
@@ -399,7 +403,6 @@ public class WatVisitorTest
     }
 
 
-    
     [Test]
     public void TestElse()
     {
@@ -422,7 +425,7 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    else\n    i32.const 4\n    local.set $x\n    end\n    i32.const 0"));
     }
-    
+
     [Test]
     public void TestElseIf()
     {
@@ -449,5 +452,25 @@ public class WatVisitorTest
         Assert.True(result.Contains("    if\n    i32.const 6\n    local.set $x\n"));
         Assert.True(result.Contains("    else\n    i32.const 7\n    local.set $x\n    end\n    end\n    i32.const 0"));
     }
-    
+
+    [Test]
+    public void TestIndentation()
+    {
+        var watVisitor = new WatVisitor(new Dictionary<string, ParamsFGST>(), new HashSet<string>());
+        Assert.AreEqual("", watVisitor._t);
+        watVisitor.IncreaseIndentation();
+        Assert.AreEqual("  ", watVisitor._t);
+        watVisitor.IncreaseIndentation();
+        watVisitor.IncreaseIndentation();
+        watVisitor.IncreaseIndentation();
+        Assert.AreEqual("        ", watVisitor._t);
+        watVisitor.DecreaseIndentation();
+        watVisitor.DecreaseIndentation();
+        Assert.AreEqual("    ", watVisitor._t);
+        watVisitor.DecreaseIndentation();
+        watVisitor.DecreaseIndentation();
+        Assert.AreEqual("", watVisitor._t);
+        watVisitor.DecreaseIndentation();
+        Assert.AreEqual("", watVisitor._t);
+    }
 }

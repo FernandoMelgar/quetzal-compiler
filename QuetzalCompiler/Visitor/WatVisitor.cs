@@ -9,6 +9,22 @@ public class WatVisitor
     public string CurrentFunction;
     private string _currentBreakLabel;
     private int _identationLevel = 0;
+    public string _t = "";
+
+    public void IncreaseIndentation()
+    {
+        _identationLevel += 1;
+        _t += "  ";
+    }
+
+
+    public void DecreaseIndentation()
+    {
+        if (_identationLevel <= 0)
+            return;
+        _identationLevel -= 1;
+        _t = _t[..^2];
+    }
 
     public WatVisitor(IDictionary<string, ParamsFGST> table, HashSet<string> fpvVgst)
     {
@@ -25,17 +41,17 @@ public class WatVisitor
 
     public string Visit(DefList node)
     {
-        var sb = new StringBuilder();
-        sb.Append("(module\n");
-        //TODO: Imports de funciones default
-        sb.Append(VisitGlobalVars());
+        
+        var sb = new StringBuilder()
+            .Append("(module\n")
+            .Append("") //TODO: Imports de funciones default
+            .Append(VisitGlobalVars());
         foreach (var child in node)
         {
             if (child.GetType().Name == "VarDef")
                 continue;
             sb.Append(Visit((dynamic) child));
         }
-
         return sb.ToString();
     }
 
@@ -193,32 +209,35 @@ public class WatVisitor
     public string Visit(ExprList node)
     {
         return VisitChildren(node);
-    }  
-    
+    }
+
     public string Visit(If node)
     {
         var sb = new StringBuilder();
-        
-        
+
+
         sb.Append(Visit((dynamic) node[0])); // Expr
         sb.Append($"    if\n");
         sb.Append(Visit((dynamic) node[1])); // StmtList
         sb.Append(Visit((dynamic) node[2])); // ElseIfList
-        
-        if (node[3].CountChildren() > 0){
+
+        if (node[3].CountChildren() > 0)
+        {
             sb.Append(Visit((dynamic) node[3])); // Else
         }
         else
         {
             sb.Append($"    end\n");
         }
+
         if (node[2].CountChildren() > 0)
         {
             sb.Append($"    end\n");
         }
+
         return sb.ToString();
     }
-    
+
     public string Visit(Elif node)
     {
         var sb = new StringBuilder();
@@ -226,7 +245,7 @@ public class WatVisitor
         sb.Append(Visit((dynamic) node[0])); // Expr
         sb.Append($"    if\n");
         sb.Append(Visit((dynamic) node[1])); // StmtList
-        
+
         return sb.ToString();
     }
 
@@ -238,11 +257,11 @@ public class WatVisitor
         {
             sb.Append(VisitChildren(node));
         }
-        
+
 
         return sb.ToString();
     }
-    
+
     public string Visit(Else node)
     {
         var sb = new StringBuilder();
@@ -256,8 +275,7 @@ public class WatVisitor
         return sb.ToString();
     }
 
-    
-    
+
     public string Visit(LowerThan node)
     {
         var sb = new StringBuilder();
@@ -311,5 +329,4 @@ public class WatVisitor
         sb.Append($"    i32.ne\n");
         return sb.ToString();
     }
-    
 }
