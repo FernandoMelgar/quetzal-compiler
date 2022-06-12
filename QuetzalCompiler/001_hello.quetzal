@@ -1,8 +1,24 @@
+var global1;
+var global2;
+
+sqrt(z, zz) {
+    var r;
+}
+
 main() {
     var x;
     var y;
     loop {
-        inc x;
-        inc y;
     }
+    if (1 < 2) {
+        x = 3;
+    } elif (4 < 5) {
+        x = 6;
+    }
+    elif (4 < 5) {
+        x = 6;
+    } else {
+        x= 8;
+    }
+    inc x;
 }
