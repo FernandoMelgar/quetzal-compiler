@@ -156,8 +156,24 @@ public class WatVisitorTest
         var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 10\n    global.set $global1\n"));
-        
     }
-    
-    
+
+    [Test]
+    public void TestLowerThan()
+    {
+        var program = @"
+        main() {
+            if (1 < 2) {
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.lt_s"));
+    }
 }
