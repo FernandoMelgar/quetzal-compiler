@@ -271,6 +271,134 @@ public class WatVisitorTest
         string result = watVisitor.Visit((dynamic) ast);
         Assert.True(result.Contains("    i32.const 1\n    i32.const 2\n    i32.ne\n    if\n    end\n    i32.const 0"));
     }
+
+    [Test]
+    public void TestStmtInc()
+    {
+        var program = @"
+        main() {
+            var x;
+            x = 0;
+            inc x;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 1\n    local.get $x\n    $i32.add\n    local.set $x"));
+    }
+    
+    [Test]
+    public void TestStmtDec()
+    {
+        var program = @"
+        main() {
+            var x;
+            x = 0;
+            dec x;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    local.get $x\n    i32.const 1\n    $i32.sub\n    local.set $x"));
+    }
+    
+    [Test]
+    public void TestAssignNegativeNumber()
+    {
+        var program = @"
+        main() {
+            var x;
+            x = -99;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 0\n    i32.const 99\n    i32.sub\n    local.set $x"));
+    }
+    
+    [Test]
+    public void TestNot()
+    {
+        var program = @"
+        main() {
+            var x;
+            x = not 2;
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains("    i32.const 2\n    i32.eqz\n    local.set $x"));
+    }
+    
+     
+    [Test]
+    public void TestLoop()
+    {
+        var program = @"
+        main() {
+            var x;
+            var y;
+            loop {
+                inc x;
+                inc y;
+                break;
+            }
+        }";
+        var parser = new Parser(_classifier.ClassifyAsEnumerable(program).GetEnumerator());
+        var ast = parser.Program();
+        var fpv = new FirstPassVisitor();
+        fpv.Visit((dynamic) ast);
+        var spv = new SecondPassVisitor(new Dictionary<string, ParamsFGST>(fpv.FGST), new HashSet<string>(fpv.VGST));
+        spv.Visit((dynamic) ast);
+        var watVisitor = new WatVisitor(spv.FGST, fpv.VGST);
+        string result = watVisitor.Visit((dynamic) ast);
+        Assert.True(result.Contains(@"    (local $x i32)
+    (local $y i32)
+    block $00001
+        loop $00001
+            
+            "));
+    }
+
+
+    [Test]
+    public void TestGenerateLabel()
+    {
+        var watVisitor = new WatVisitor(new Dictionary<string, ParamsFGST>(), new HashSet<string>());
+        Assert.AreEqual("$00000", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00001", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00002", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00003", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00004", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00005", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00006", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00007", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00008", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00009", watVisitor.GenerateLabel());
+        Assert.AreEqual("$00010", watVisitor.GenerateLabel());
+    }
+
+
     
     [Test]
     public void TestElse()

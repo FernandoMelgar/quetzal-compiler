@@ -1,10 +1,8 @@
 main() {
     var x;
     var y;
-    x = 1;
-    y = 2;
-    
-    if (x > y > 2) {
-    
+    loop {
+        inc x;
+        inc y;
     }
- }
+}

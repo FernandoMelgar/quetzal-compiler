@@ -7,6 +7,8 @@ public class WatVisitor
     IDictionary<string, ParamsFGST> table;
     HashSet<string> varTable;
     public string CurrentFunction;
+    private string _currentBreakLabel;
+    private int _identationLevel = 0;
 
     public WatVisitor(IDictionary<string, ParamsFGST> table, HashSet<string> fpvVgst)
     {
@@ -14,6 +16,12 @@ public class WatVisitor
         this.varTable = fpvVgst;
     }
 
+    int _labelCounter = 0;
+
+    public string GenerateLabel()
+    {
+        return $"${_labelCounter++:00000}";
+    }
 
     public string Visit(DefList node)
     {
@@ -133,7 +141,53 @@ public class WatVisitor
 
     public string Visit(Int node)
     {
-        return $"    i32.const {node.AnchorToken.Lexeme}\n";
+        return node.AnchorToken.Lexeme.Contains('-')
+            ? $"    i32.const 0\n    i32.const {node.AnchorToken.Lexeme[1..]}\n    i32.sub\n"
+            : $"    i32.const {node.AnchorToken.Lexeme}\n";
+    }
+
+    public string Visit(StmtInc node)
+    {
+        return new StringBuilder()
+            .Append("    i32.const 1\n")
+            .Append($"    local.get ${node[0].AnchorToken.Lexeme}\n")
+            .Append("    $i32.add\n")
+            .Append($"    local.set ${node[0].AnchorToken.Lexeme}\n")
+            .ToString();
+    }
+
+    public string Visit(StmtDec node)
+    {
+        return new StringBuilder()
+            .Append($"    local.get ${node[0].AnchorToken.Lexeme}\n")
+            .Append("    i32.const 1\n")
+            .Append("    $i32.sub\n")
+            .Append($"    local.set ${node[0].AnchorToken.Lexeme}\n")
+            .ToString();
+    }
+
+    public string Visit(Not node)
+    {
+        return new StringBuilder()
+            .Append($"    i32.const {node[0].AnchorToken.Lexeme}\n")
+            .Append("    i32.eqz\n")
+            .ToString();
+    }
+
+    public string Visit(Loop node)
+    {
+        _currentBreakLabel = GenerateLabel();
+        var loopLabel = GenerateLabel();
+        var sb = new StringBuilder()
+            .Append($"    block {_currentBreakLabel}\n")
+            .Append($"      loop {loopLabel}\n");
+
+        foreach (var child in node[0])
+            sb.Append($"-   {Visit((dynamic) child)}\n");
+
+        return sb.Append($"            br {loopLabel}\n")
+            .Append("        end\n")
+            .Append("    end\n").ToString();
     }
 
     public string Visit(ExprList node)
