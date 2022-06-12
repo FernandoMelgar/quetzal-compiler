@@ -1,5 +1,9 @@
 namespace QuetzalCompiler;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 /*
   Buttercup compiler - Parent Node class for the AST (Abstract Syntax Tree).
   Copyright (C) 2013-2020 Ariel Ortiz, ITESM CEM

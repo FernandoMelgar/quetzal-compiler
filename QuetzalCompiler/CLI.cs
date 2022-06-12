@@ -2,7 +2,11 @@ using System;
 using System.Data;
 using System.IO;
 using QuetzalCompiler.Visitor;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 namespace QuetzalCompiler;
 
 public class CLI
@@ -65,8 +69,8 @@ public class CLI
             }
 
             var watVisitor = new WatVisitor(secondPassVisitor.FGST, firstPassVisitor.VGST);
-            string result = watVisitor.Visit((dynamic) rootNode);
-            Console.WriteLine(result);
+            string result = watVisitor.Visit((dynamic)rootNode);
+            File.WriteAllText("../../../Output/output.wat", result);
         }
         catch (FileNotFoundException e)
         {

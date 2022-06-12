@@ -1,7 +1,11 @@
 using NUnit.Framework;
 using QuetzalCompiler;
 namespace Tests;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 public class TokenClassifierTest
 {
     private TokenClassifier _classifier = new TokenClassifier();
@@ -318,6 +322,17 @@ public class TokenClassifierTest
         
         var token = tokenizedInput.First;
         Assert.AreEqual(";", token.Value.Lexeme);
+        Assert.AreEqual(TokenCategory.SEMICOLON, token.Value.Category);    
+    }
+    
+    [Test]
+    public void ClassifyManySemicolons()
+    {
+        var tokenizedInput = _classifier.classify(";;;;;;;;;;");
+        Assert.AreEqual(1, tokenizedInput.Count);
+        
+        var token = tokenizedInput.First;
+        Assert.AreEqual(";;;;;;;;;;", token.Value.Lexeme);
         Assert.AreEqual(TokenCategory.SEMICOLON, token.Value.Category);    
     }
 

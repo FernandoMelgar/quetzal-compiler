@@ -1,5 +1,9 @@
 namespace QuetzalCompiler;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 public enum TokenCategory
 {
     // Palabras Reservadas∫

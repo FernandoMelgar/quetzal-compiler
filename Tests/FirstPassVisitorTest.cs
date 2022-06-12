@@ -2,7 +2,11 @@ using System.Linq;
 using NUnit.Framework;
 using QuetzalCompiler;
 using QuetzalCompiler.Visitor;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 namespace Tests;
 
 public class FirstPassVisitorTest
