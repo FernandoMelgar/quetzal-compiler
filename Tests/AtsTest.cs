@@ -6,7 +6,11 @@ using Char = QuetzalCompiler.Char;
 using String = QuetzalCompiler.String;
 
 namespace Tests;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 public class AtsTest
 {
     
@@ -419,11 +423,20 @@ public class AtsTest
     [Test]
     public void TestFunctionCall()
     {
-        var parser = new Parser(_classifier.ClassifyAsEnumerable("print(id, id*id, id - id, id / id, +id)").GetEnumerator());
-        var nodes = parser.FunCall();
+        var parser = new Parser(_classifier.ClassifyAsEnumerable("print(id, id*id, id - id, id / id, +id);").GetEnumerator());
+        var nodes = parser.Stmt();
         Assert.IsInstanceOf<FunCall>(nodes);
         Assert.IsInstanceOf<Id>(nodes[0]);
         Assert.IsInstanceOf<ExprList>(nodes[1]);
+    }
+    [Test]
+    public void TestExprFunCall()
+    {
+        var parser = new Parser(_classifier.ClassifyAsEnumerable("x = print(r);").GetEnumerator());
+        var nodes = parser.Stmt();
+        Assert.IsInstanceOf<Assign>(nodes);
+        Assert.IsInstanceOf<Id>(nodes[0]);
+        Assert.IsInstanceOf<ExprFunCall>(nodes[1]);
     }
 
     [Test]
@@ -574,7 +587,7 @@ public class AtsTest
     {
         var parser = new Parser(_classifier.ClassifyAsEnumerable("[id, id, id, id]").GetEnumerator());
         var nodes = parser.Array();
-        Assert.IsInstanceOf<ExprList>(nodes);
+        Assert.IsInstanceOf<ExprListArray>(nodes);
         Assert.IsInstanceOf<Id>(nodes[0]);
         Assert.IsInstanceOf<Id>(nodes[1]); 
         Assert.IsInstanceOf<Id>(nodes[2]); 
@@ -586,7 +599,7 @@ public class AtsTest
     {
         var parser = new Parser(_classifier.ClassifyAsEnumerable("[id, id, id, id]").GetEnumerator());
         var nodes = parser.ExprPrimary();
-        Assert.IsInstanceOf<ExprList>(nodes);
+        Assert.IsInstanceOf<ExprListArray>(nodes);
         Assert.IsInstanceOf<Id>(nodes[0]);
         Assert.IsInstanceOf<Id>(nodes[1]); 
         Assert.IsInstanceOf<Id>(nodes[2]); 
@@ -635,9 +648,9 @@ public class AtsTest
     [Test]
     public void TestExprPrimaryFunctionCall()
     {
-        var parser = new Parser(_classifier.ClassifyAsEnumerable("print(id1)").GetEnumerator());
+        var parser = new Parser(_classifier.ClassifyAsEnumerable("print(id1);").GetEnumerator());
         var nodes = parser.ExprPrimary();
-        Assert.IsInstanceOf<FunCall>(nodes); 
+        Assert.IsInstanceOf<ExprFunCall>(nodes); 
     }
 
     [Test]

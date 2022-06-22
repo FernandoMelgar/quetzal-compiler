@@ -1,5 +1,9 @@
 namespace QuetzalCompiler;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 
 public class Comparison: Node {}
 
@@ -30,6 +34,8 @@ public class ModuleOp: Node {}
 
 public class ExprList: Node {}
 
+public class ExprListArray: Node {}
+
 public class Expr: Node {}
 
 public class Plus: Node {}
@@ -58,6 +64,7 @@ public class And: Node {}
 public class Or: Node {}
 
 public class FunCall: Node {}
+public class ExprFunCall: Node {}
 
 public class VarDef: Node {}
 

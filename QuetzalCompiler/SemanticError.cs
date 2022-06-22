@@ -1,6 +1,10 @@
 namespace QuetzalCompiler;
 using System;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 public class SemanticError : Exception
 {
     public SemanticError(string message, Token token) :

@@ -97,13 +97,6 @@ public class SecondPassVisitor
 
     public void Visit(VarDef node)
     {
-        var variableName = node[0].AnchorToken.Lexeme;
-        if (!VGST.Contains(variableName))
-            VGST.Add(variableName);
-        else
-            throw new SemanticError(
-                "Duplicated variable: " + variableName,
-                node[0].AnchorToken);
     }
 
     public void Visit(StmtList node)
@@ -205,7 +198,8 @@ public class SecondPassVisitor
 
     public void Visit(Or node)
     {
-        VisitChildren(node);
+        Visit((dynamic) node[0]);
+        Visit((dynamic) node[1]);
     }
 
     public void Visit(True node)
@@ -263,6 +257,17 @@ public class SecondPassVisitor
         }
     }
 
+    void Visit(UnaryPlus node)
+    {
+        Visit((dynamic) node[0]);
+    }
+
+    public void Visit(UnaryMinus node)
+    {
+        Visit((dynamic) node[0]);
+    }
+    
+
     public void Visit(StmtInc node)
     {
         Visit((dynamic) node[0]);
@@ -271,6 +276,29 @@ public class SecondPassVisitor
     public void Visit(StmtDec node)
     {
         Visit((dynamic) node[0]);
+    }
+
+    public void Visit(ExprFunCall node)
+    {
+        var exprListNode = node[1];
+        if (FGST.ContainsKey(node[0].AnchorToken.Lexeme))
+        {
+            var functionInfo = FGST[node[0].AnchorToken.Lexeme];
+            if (functionInfo.arity != exprListNode.CountChildren())
+            {
+                throw new SemanticError(
+                    $"Incorrect number of params for function: '{node[0].AnchorToken.Lexeme}', should be {functionInfo.arity} not {exprListNode.CountChildren()} :)",
+                    node[0].AnchorToken
+                );
+            }
+        }
+        else
+        {
+            throw new SemanticError(
+                $"Function '{node[0].AnchorToken.Lexeme}' Is not Created ",
+                node[0].AnchorToken
+            );
+        }
     }
 
     public void Visit(FunCall node)
@@ -297,6 +325,11 @@ public class SecondPassVisitor
     }
 
     public void Visit(ExprList node)
+    {
+        VisitChildren(node);
+    }
+    
+    public void Visit(ExprListArray node)
     {
         VisitChildren(node);
     }

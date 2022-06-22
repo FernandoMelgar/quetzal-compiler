@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 namespace QuetzalCompiler;
 
 public class TokenClassifier
@@ -43,7 +47,7 @@ public class TokenClassifier
         | (?<Multiply> [*])
         | (?<Divide> [/])
         | (?<Char> [']([^""\n\\] | ( \\([nrt\\'""] | u[0-9a-fA-F]{6})))['])
-        | (?<Semicolon> [;])
+        | (?<Semicolon> [;]+)
         | (?<Comma> [,])
         | (?<ParLeft> [(]) 
         | (?<ParRight> [)])

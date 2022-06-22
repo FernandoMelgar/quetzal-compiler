@@ -1,7 +1,11 @@
 using NUnit.Framework;
 using NUnit.Framework.Internal;
 using QuetzalCompiler;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 namespace Tests;
 
 public class ParserTest

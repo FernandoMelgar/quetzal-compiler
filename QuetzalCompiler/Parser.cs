@@ -1,5 +1,9 @@
 using System.Collections.Generic;
-
+/*
+ * Authors:
+ *   - A01748354: Fernando Manuel Melgar Fuentes
+ *   - A01376364: Alex Serrano Durán
+ */
 namespace QuetzalCompiler;
 public class Parser
 {
@@ -349,6 +353,22 @@ public class Parser
 
         return exprList;
     }
+    
+    public Node ExprListArray()
+    {
+        var exprListArray = new ExprListArray();
+        if (firstOfExpression.Contains(CurrentTokenCategory))
+        {
+            exprListArray.Add(Expr());
+            while (CurrentTokenCategory == TokenCategory.COMMA)
+            {
+                Expect(TokenCategory.COMMA);
+                exprListArray.Add(Expr());
+            }
+        }
+
+        return exprListArray;
+    }
 
     public Node StmtDec()
     {
@@ -557,7 +577,7 @@ public class Parser
             
             //  FUNCTION-CALL    
             Expect(TokenCategory.PAR_LEFT);
-            var functionCall = new FunCall() {id, ExprList()};
+            var functionCall = new ExprFunCall() {id, ExprList()};
             Expect(TokenCategory.PAR_RIGHT);
             return functionCall;
 
@@ -607,9 +627,9 @@ public class Parser
     public Node Array()
     {
         Expect(TokenCategory.BRACKET_LEFT);
-       var exprList =  ExprList();
+        var exprListArray =  ExprListArray();
         Expect(TokenCategory.BRACKET_RIGHT);
-        return exprList;
+        return exprListArray;
     }
 
     public Node OpUnary()

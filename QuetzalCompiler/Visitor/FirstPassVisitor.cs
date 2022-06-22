@@ -22,9 +22,9 @@ public class FirstPassVisitor
 
     public void Visit(DefList node)
     {
-        foreach (var child in node)
+        for (int i = 0; i < node.CountChildren(); i++)
         {
-            Visit((dynamic) child);
+            Visit((dynamic) node[i]);
         }
 
         if (!FGST.ContainsKey("main"))
